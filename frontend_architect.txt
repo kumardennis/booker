@@ -1,0 +1,20 @@
+Frontend Arcitecture
+
+- Use Routing via router
+- Use URL params as much as can for shareable links
+- Use zustand for global state
+- Use nextjs
+- Each page should have its own independant state
+- Each page should use authentication and private routes
+- SendGun integration for email notifications
+- React toastify for in-app notifications
+- Authenticated urls self-contained with registeration redirect
+
+
+Example routes:
+
+- /categories/clubs
+- /clubs/skfookus
+- /clubs/skfookus/groups
+- /clubs/skfookus/trainings
+- /clubs/skfookus/groups/monday
