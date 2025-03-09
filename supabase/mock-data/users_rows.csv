@@ -1,0 +1,7 @@
+id,created_at,first_name,last_name,email,phone,profile_image,userId,club_id,is_trainer
+1,2025-02-02 20:06:14.826323+00,Kärt,Ruutel,user1@test.com,52233566,https://www.shutterstock.com/shutterstock/photos/1836020740/display_1500/stock-photo-profile-picture-of-smiling-millennial-asian-girl-isolated-on-grey-wall-background-look-at-camera-1836020740.jpg,305f178d-fbef-4c31-b3ab-884017567269,1,false
+2,2025-02-02 20:09:55.163401+00,Egle,Kruus,user2@test.com,+372-55688887,https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?cs=srgb&dl=pexels-olly-3763188.jpg&fm=jpg,a5773058-ac9f-4366-bd2b-2857ce3c062e,1,false
+3,2025-02-02 20:11:16.48396+00,Mart,Eerma,user3@test.com,+372-566588712,https://www.shutterstock.com/image-photo/happy-mid-aged-older-business-600nw-2322385015.jpg,d142e291-2429-494c-b562-ef69e3b585e0,1,false
+4,2025-02-02 20:12:49.797768+00,Rainer,Terras,trainer1@test.com,+372-57458745,https://skfookus.ee/wp-content/uploads/2023/05/23.04.29-treenerid-2023-4x5-8-400x500.jpg,8066ef20-4133-4f88-a6e8-f65763a8fa7e,1,true
+5,2025-02-02 20:14:11.404271+00,Sven Erik,Manglus,trainer2@test.com,+372-58965896,https://skfookus.ee/wp-content/uploads/2024/05/23.10.21-Sven-ja-Laureen-TSK-186-400x500.jpg,4bdf66e3-d51f-4201-8476-2aa2ce2ff71f,1,true
+6,2025-02-03 21:23:21.433013+00,Kalev,Jogi,waiter@test.com,+372-58235823,https://www.shutterstock.com/image-vector/young-smiling-man-avatar-3d-600nw-2124054758.jpg,6d8c91d9-63fc-4435-a01b-816edba7abcb,1,false

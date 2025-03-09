@@ -1,0 +1,4 @@
+id,created_at,club_id,address_id,max_occupancy,start_time,once_in_number_of_weeks,day,end_time
+1,2025-02-03 15:20:10.462491+00,1,1,8,18:00:00,1,MONDAY,19:30:00
+2,2025-02-03 15:20:47.841221+00,1,1,12,19:30:00,2,MONDAY,21:00:00
+3,2025-02-03 15:21:32.919955+00,1,2,12,20:00:00,1,THURSDAY,21:30:00
