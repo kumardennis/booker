@@ -9,25 +9,23 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { club_id, day, from_date, till_date, training_id } = await req
-      .json();
+    const { club_id } = await req.json();
 
-    if (!confirmedRequiredParams([])) {
+    if (!confirmedRequiredParams([club_id])) {
       return new Response(JSON.stringify(errorResponseData), {
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const { data: users, error } = await supabase
-      .from("group_trainings")
+      .from("users")
       .select(
-        "*, club_groups!inner(*,  clubs(*), addresses(*)), users:users_trainings(id, user:users(*)), trainers:trainers_trainings(id, trainer:users(*))",
+        "*",
       )
       .match({
-        ...(training_id && { id: training_id }),
         ...(club_id && { club_id }),
-        ...(day && { "club_groups.day": day }),
-      }).gte("start_timestamp", from_date).lte("end_timestamp", till_date);
+        "is_trainer": true,
+      });
 
     const responseData = {
       isRequestSuccessfull: error === null,

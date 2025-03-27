@@ -9,7 +9,7 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { club_id, day } = await req.json();
+    const { club_id, day, group_id } = await req.json();
 
     if (!confirmedRequiredParams([])) {
       return new Response(JSON.stringify(errorResponseData), {
@@ -25,6 +25,7 @@ export const handler = async (req: Request) => {
       .match({
         ...(club_id && { club_id }),
         ...(day && { day }),
+        ...(group_id && { id: group_id }),
       });
 
     const responseData = {
@@ -37,7 +38,7 @@ export const handler = async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ data: err.toString() }), {
+    return new Response(JSON.stringify({ data: (err as Error).toString() }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
