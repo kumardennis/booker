@@ -15,6 +15,19 @@ Example routes:
 
 - /categories/clubs
 - /clubs/skfookus
-- /clubs/skfookus/groups
-- /clubs/skfookus/trainings
-- /clubs/skfookus/groups/monday
+- /groups?club=skfookus
+- /groups?club=skfookus&day=MONDAY
+- /trainings?club=skfookus
+
+
+Components:
+
+- Header with authentication
+- Club Header
+- Club thumbnail
+- Side navigation menu
+- Wide group time aggregator
+- Breif list of players
+- Profile card
+- Button
+- Pill

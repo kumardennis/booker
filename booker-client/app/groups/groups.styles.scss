@@ -1,0 +1,74 @@
+.groups-times-aggregator {
+    padding-top: 2rem;
+
+    .groups-times-aggregator__item {
+        height: 7.25rem;
+        width: 100%;
+        box-shadow: 0 0 1rem 0.1rem rgba(0, 0, 0, 0.2);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-right: 2rem;
+
+        .groups-times-aggregator__item__title {
+            width: 7.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .groups-times-aggregator__item__title__day {
+                font-size: var(--font-size-lg);
+                font-weight: 600;
+            }
+
+            .groups-times-aggregator__item__title__groups {
+                font-size: var(--font-size-md);
+                font-weight: 400;
+                color: var(--color-gray-dark);
+                text-transform: capitalize;
+            }
+        }
+
+        .groups-times-aggregator__item__content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0.2rem;
+            flex-grow: 1;
+            height: 6rem;
+            flex-wrap: wrap;
+
+            .groups-times-aggregator__item__content__time {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+                padding: 0.2rem 0.5rem;
+                border-radius: 1rem;
+                background-color: var(--color-gray);
+                width: 8.2rem;
+                text-wrap: nowrap;
+
+                &.is-vacant {
+                    background-color: var(--color-success);
+                    color: var(--color-light)
+                }
+            }
+        }
+
+        .groups-times-aggregator__item__cta {
+            width: 7.25rem;
+
+            .groups-times-aggregator__item__cta__button {
+                background-color: var(--color-dark);
+                color: var(--color-light);
+                padding: 0.4rem 0.5rem;
+                border-radius: 1rem;
+                text-align: center;
+                line-height: 1;
+            }
+        }
+    }
+}

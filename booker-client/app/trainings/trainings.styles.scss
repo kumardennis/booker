@@ -1,0 +1,47 @@
+.group-trainings {
+
+    .trainings-filter {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-gray);
+            background-color: transparent;
+            margin-right: 0.5rem;
+        }
+    }
+
+    .group-trainings__items {
+        display: flex;
+
+        .groups-times-day__item__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+
+            .groups-times-day__item__header__date {
+                font-size: var(--font-size-lg);
+                font-weight: 600;
+                margin-bottom: -0.25rem;
+            }
+
+            .groups-times-day__item__header__day {
+                font-size: var(--font-size-md);
+                color: var(--color-gray-dark);
+            }
+        }
+
+        .groups-times-day__item__subheader {
+            display: flex;
+            flex-direction: column;
+
+            .groups-times-day__item__subheader__time {
+                color: var(--color-dark);
+                font-size: var(--font-size-sm);
+            }
+        }
+    }
+}

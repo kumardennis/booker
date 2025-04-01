@@ -18,7 +18,7 @@ export const handler = async (req: Request) => {
       });
     }
 
-    const { data: users, error } = await supabase
+    const query = supabase
       .from("group_trainings")
       .select(
         "*, club_groups!inner(*,  clubs(*), addresses(*)), users:users_trainings(id, user:users(*)), trainers:trainers_trainings(id, trainer:users(*))",
@@ -27,7 +27,12 @@ export const handler = async (req: Request) => {
         ...(training_id && { id: training_id }),
         ...(club_id && { club_id }),
         ...(day && { "club_groups.day": day }),
-      }).gte("start_timestamp", from_date).lte("end_timestamp", till_date);
+      });
+
+    if (from_date) query.gte("start_timestamp", from_date);
+    if (till_date) query.lte("end_timestamp", till_date);
+
+    const { data: users, error } = await query;
 
     const responseData = {
       isRequestSuccessfull: error === null,
