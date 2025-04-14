@@ -1,4 +1,4 @@
-
+@import "../../app/mixins.scss";
 
     .users-card__item {
         margin-top: 2rem;
@@ -54,11 +54,8 @@
             width: 100%;
 
             .groups-times-day__item__cta__button {
-                background-color: var(--color-dark);
-                color: var(--color-light);
-                padding: 0.4rem 0.5rem;
-                border-radius: 1rem;
-                text-align: center;
+                @include solid-button();
+
                 line-height: 1;
                 margin-top: 2rem;
             }

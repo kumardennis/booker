@@ -21,7 +21,7 @@ export type ClubGroup = {
     end_time: string;
     clubs: Club[];
     addresses: Address[];
-    users: UserElement[];
+    users: UserElementGroup[];
     trainers: TrainerElement[];
 };
 
@@ -56,6 +56,16 @@ export type UserElement = {
     user: User;
 };
 
+export type UserElementGroup = UserElement & {
+    is_active: Boolean;
+};
+
+export type UserElementTraining = UserElement & {
+    marked_absent: Boolean;
+    marked_absent_timestamp: string;
+    promo_code_id: number;
+};
+
 export type GroupTraining = {
     id: number;
     created_at: Date;
@@ -65,6 +75,6 @@ export type GroupTraining = {
     start_timestamp: Date;
     end_timestamp: Date;
     club_groups: ClubGroup;
-    users: UserElement[];
+    users: UserElementTraining[];
     trainers: TrainerElement[];
 };

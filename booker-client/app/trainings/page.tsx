@@ -106,7 +106,7 @@ export default async function TrainingsPage({
                 </div>
               }
               CTASlot={
-                <Link href={`/trainings/training-details`}>
+                <Link href={`/trainings/training?training_id=${training.id}`}>
                   <div className="groups-times-day__item__cta__button">
                     Check trainings
                   </div>

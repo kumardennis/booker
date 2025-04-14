@@ -83,9 +83,7 @@ export default async function GroupsPage({
               }
               subHeaderSlot={`${group.trainers[0].trainer.first_name} ${group.trainers[0].trainer.last_name}`}
               CTASlot={
-                <Link
-                  href={`/groups/group-details?${apiQueryParams}&group_id=${group.id}`}
-                >
+                <Link href={`/groups/group?group_id=${group.id}`}>
                   <div className="groups-times-day__item__cta__button">
                     Check group
                   </div>

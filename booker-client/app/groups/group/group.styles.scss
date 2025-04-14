@@ -1,0 +1,22 @@
+@import "../../mixins.scss";
+
+.group-details {
+  .group-details__header__cta {
+    @include hollow-button();
+    font-size: var(--font-size-md);
+  }
+
+  hr {
+    height: 0.1rem;
+    background-color: var(--color-gray);
+    margin: 0.2rem 0;
+  }
+
+  .group-details__users {
+    display: flex;
+
+    .user-cta {
+      @include solid-button();
+    }
+  }
+}

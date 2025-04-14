@@ -1,3 +1,5 @@
+@import "../mixins.scss";
+
 .groups-times-aggregator {
     padding-top: 2rem;
 
@@ -62,11 +64,8 @@
             width: 7.25rem;
 
             .groups-times-aggregator__item__cta__button {
-                background-color: var(--color-dark);
-                color: var(--color-light);
-                padding: 0.4rem 0.5rem;
-                border-radius: 1rem;
-                text-align: center;
+                @include solid-button();
+
                 line-height: 1;
             }
         }

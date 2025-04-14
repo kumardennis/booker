@@ -21,7 +21,7 @@ export const handler = async (req: Request) => {
     const query = supabase
       .from("group_trainings")
       .select(
-        "*, club_groups!inner(*,  clubs(*), addresses(*)), users:users_trainings(id, user:users(*)), trainers:trainers_trainings(id, trainer:users(*))",
+        "*, club_groups!inner(*,  clubs(*), addresses(*)), users:users_trainings(id, marked_absent, marked_absent_timestamp, promo_code_id, user:users(*)), trainers:trainers_trainings(id, trainer:users(*))",
       )
       .match({
         ...(training_id && { id: training_id }),

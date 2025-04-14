@@ -20,7 +20,7 @@ export const handler = async (req: Request) => {
     const { data: users, error } = await supabase
       .from("club_groups")
       .select(
-        "*, clubs(*), addresses(*), users:users_groups(id, user:users(*)), trainers:trainers_groups(id, trainer:users(*))",
+        "*, clubs(*), addresses(*), users:users_groups(id, is_active, user:users(*)), trainers:trainers_groups(id, trainer:users(*))",
       )
       .match({
         ...(club_id && { club_id }),

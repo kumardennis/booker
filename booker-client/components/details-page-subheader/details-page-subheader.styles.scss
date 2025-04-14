@@ -1,0 +1,64 @@
+@import "../../app/mixins.scss";
+
+.details-page__subheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+
+  .details-page__stats {
+    display: flex;
+
+    div {
+      margin-right: 4rem;
+
+      .field {
+        color: var(--color-gray-dark);
+        margin-right: 0.5rem;
+        font-size: var(--font-size-sm);
+      }
+
+      .value {
+        font-size: var(--font-size-lg);
+      }
+    }
+
+    .details-page__stats__attending {
+      .value {
+        color: var(--color-warning);
+
+        &.is-full {
+          color: var(--color-success);
+        }
+      }
+    }
+
+    .details-page__stats__empty-spots {
+      .value {
+        color: var(--color-success);
+
+        &.is-almost-full {
+          color: var(--color-danger);
+        }
+      }
+    }
+  }
+
+  .details-page__history__notices {
+    display: flex;
+    justify-content: space-between;
+    width: 17rem;
+    font-size: var(--font-size-sm);
+
+    .history {
+      @include hollow-button();
+      cursor: pointer;
+      width: 8rem;
+    }
+
+    .notices {
+      @include solid-button();
+      cursor: pointer;
+      width: 8rem;
+    }
+  }
+}

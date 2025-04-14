@@ -1,0 +1,21 @@
+@import "../../mixins.scss";
+
+.training-details {
+  .training-details__header__cta {
+    @include solid-button();
+  }
+
+  hr {
+    height: 0.1rem;
+    background-color: var(--color-gray);
+    margin: 0.2rem 0;
+  }
+
+  .training-details__users {
+    display: flex;
+
+    .user-cta {
+      @include solid-button();
+    }
+  }
+}
