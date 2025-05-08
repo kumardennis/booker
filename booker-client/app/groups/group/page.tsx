@@ -1,11 +1,18 @@
-import Link from "next/link";
 import "./group.styles.scss";
-import { format, parse } from "date-fns";
-import { ClubGroup } from "@/app/types";
-import cn from "classnames";
-import { UserCard } from "@/components/user-card/user-card";
-import { DetailsPageHeader } from "@/components/details-page-header/details-page-header";
-import { DetailsPageSubHeader } from "@/components/details-page-subheader/details-page-subheader";
+import { format, parse, parseISO } from "date-fns";
+import {
+  ClubGroup,
+  CRUDType,
+  EventTypePermission,
+  GroupEventType,
+  HistoryEvent,
+} from "@/app/types";
+import { UserCard } from "@/client-components/user-card/user-card";
+import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
+import { DetailsPageSubHeader } from "@/client-components/details-page-subheader/details-page-subheader";
+import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
+import { getClearance } from "@/app/clearance/utils/actions";
+import { UserCardContainer } from "@/client-components/user-card/user-card-container";
 
 export default async function GroupPage({
   searchParams,
@@ -20,14 +27,60 @@ export default async function GroupPage({
 
   const queryString = apiQueryParams.toString();
 
-  const response = await fetch(
-    `http://localhost:3000/groups/api/get-club-groups?${queryString}`
-  );
-  const data = await response.json();
+  const [clearanceResponse, groupsDataResponse, historyResponse] =
+    await Promise.all([
+      getClearance({
+        group_id: groupId,
+        event_types: Object.keys(GroupEventType) as GroupEventType[],
+      }),
+      fetch(`http://localhost:3000/groups/api/get-club-groups?${queryString}`),
+      fetch(`http://localhost:3000/history/api/get-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...(groupId && { group_id: groupId }),
+        }),
+        cache: "no-store",
+      }),
+    ]);
 
-  const groups: ClubGroup[] = data.data;
+  const [clearanceData, groupsData, historyData] = await Promise.all([
+    clearanceResponse.json(),
+    groupsDataResponse.json(),
+    historyResponse.json(),
+  ]);
 
+  const groups: ClubGroup[] = groupsData.data;
   const group: ClubGroup | undefined = groups[0];
+  const history: HistoryEvent[] = historyData.data;
+
+  const canUserGenerateTraining =
+    clearanceData.eventsPermissions
+      ?.find(
+        (event: EventTypePermission) =>
+          event.event_type === GroupEventType.GROUP_GENERATE_TRAINING
+      )
+      ?.crudAllowed.includes(CRUDType.CREATE) ?? false;
+
+  const canUserUpdateJoinRequest =
+    clearanceData.eventsPermissions
+      ?.find(
+        (event: EventTypePermission) =>
+          event.event_type === GroupEventType.GROUP_USER_JOIN_REQUEST
+      )
+      ?.crudAllowed.includes(CRUDType.UPDATE) ?? false;
+
+  const canUserUpdateLeave =
+    clearanceData.eventsPermissions
+      ?.find(
+        (event: EventTypePermission) =>
+          event.event_type === GroupEventType.GROUP_USER_LEAVE
+      )
+      ?.crudAllowed.includes(CRUDType.UPDATE) ?? false;
+
+  console.log(clearanceData);
 
   return (
     <div className="group-details">
@@ -45,7 +98,9 @@ export default async function GroupPage({
           <span className="group-details__header__trainers">{`${group.trainers[0].trainer.first_name} ${group.trainers[0].trainer.last_name}`}</span>
         }
         rightRow1Node={
-          <div className="group-details__header__cta">Generate trainings</div>
+          canUserGenerateTraining && (
+            <div className="group-details__header__cta">Generate trainings</div>
+          )
         }
       />
 
@@ -54,16 +109,46 @@ export default async function GroupPage({
       <DetailsPageSubHeader
         max_occupancy={group?.max_occupancy ?? 0}
         users_length={group?.users?.length ?? 0}
+        history={history}
       />
+
+      <div className="group-details__requests">
+        <UserCardEmptyContainer
+          userIds={[
+            ...group.users?.map((user) => user.user.id),
+            ...group.requests?.map((request) => request.user.id),
+          ]}
+        />
+        {group.requests?.map((request) => (
+          <UserCard
+            user={request.user}
+            isRequest
+            extraInfoSlot={`Since ${format(
+              parseISO(request.created_at.toString()),
+              "do MMMM HH:mm"
+            )}`}
+            CTASlot={
+              canUserUpdateJoinRequest && (
+                <>
+                  <div className="user-request-accept">Accept</div>{" "}
+                  <div className="user-request-reject">Reject</div>
+                </>
+              )
+            }
+          />
+        ))}
+      </div>
 
       <div className="group-details__users">
         {group.users?.map((user) => (
-          <UserCard
-            user={user}
+          <UserCardContainer
+            user={user.user}
             CTASlot={
-              <>
-                <div className="user-cta">CTA</div>
-              </>
+              canUserUpdateLeave && (
+                <>
+                  <div className="user-cta">Leave</div>
+                </>
+              )
             }
           />
         ))}

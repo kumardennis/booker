@@ -7,6 +7,13 @@ import cn from "classnames";
 export default function Navbar() {
   const pathname = usePathname();
 
+  const isAuthPage =
+    pathname.includes("sign-in") || pathname.includes("sign-up");
+
+  if (isAuthPage) {
+    return null;
+  }
+
   return (
     <nav className="navbar">
       <ul>

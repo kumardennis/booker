@@ -23,6 +23,8 @@ export type ClubGroup = {
     addresses: Address[];
     users: UserElementGroup[];
     trainers: TrainerElement[];
+    requests: JoinGroupRequest[];
+    level: number;
 };
 
 export type Address = {
@@ -48,6 +50,7 @@ export type User = {
     created_at: Date;
     first_name: string;
     is_trainer: boolean;
+    is_club_admin: boolean;
     profile_image: string;
 };
 
@@ -66,6 +69,13 @@ export type UserElementTraining = UserElement & {
     promo_code_id: number;
 };
 
+export type JoinGroupRequest = UserElement & {
+    created_at: Date;
+    is_accepted: boolean;
+    is_rejected: boolean;
+    comments?: string;
+};
+
 export type GroupTraining = {
     id: number;
     created_at: Date;
@@ -77,4 +87,42 @@ export type GroupTraining = {
     club_groups: ClubGroup;
     users: UserElementTraining[];
     trainers: TrainerElement[];
+};
+
+export type HistoryEvent = {
+    id: number;
+    created_at: Date;
+    event: string;
+    event_type: EventType;
+    group_id?: number;
+    training_id?: number;
+};
+
+export enum GroupEventType {
+    GROUP_USER_JOIN_REQUEST = "GROUP_USER_JOIN_REQUEST",
+    GROUP_USER_JOIN = "GROUP_USER_JOIN",
+    GROUP_USER_LEAVE_REQUEST = "GROUP_USER_LEAVE_REQUEST",
+    GROUP_USER_LEAVE = "GROUP_USER_LEAVE",
+    GROUP_USER_WAITING_LIST = "GROUP_USER_WAITING_LIST",
+    GROUP_TIME_CHANGE = "GROUP_TIME_CHANGE",
+    GROUP_OCCUPANCY_CHANGE = "GROUP_OCCUPANCY_CHANGE",
+    GROUP_ARCHIVED = "GROUP_ARCHIVED",
+    GROUP_OTHERS = "GROUP_OTHERS",
+    GROUP_GENERATE_TRAINING = "GROUP_GENERATE_TRAINING",
+}
+
+export const EventTypeCombined = Object.assign({}, GroupEventType);
+
+export type EventType = keyof typeof EventTypeCombined;
+
+export enum CRUDType {
+    CREATE = "CREATE",
+    READ = "READ",
+    UPDATE = "UPDATE",
+    DELETE = "DELETE",
+}
+
+export type EventTypePermission = {
+    event_type: EventType;
+    crudAllowed: CRUDType[];
 };

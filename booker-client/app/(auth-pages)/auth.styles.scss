@@ -1,0 +1,38 @@
+@import "../mixins.scss";
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  width: 100%;
+
+  &.sign-in-form {
+    & > div {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      margin-bottom: 2rem;
+
+      & > label {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-dark);
+      }
+
+      & > input {
+        background-color: transparent;
+        border: 0.1rem solid var(--color-gray);
+        border-radius: 0.5rem;
+        padding: 0.4rem 1rem;
+      }
+    }
+
+    & > .btn-sign-in {
+      @include solid-button();
+      margin-bottom: 1rem;
+      width: 10rem;
+    }
+  }
+}

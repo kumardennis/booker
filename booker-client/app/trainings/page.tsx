@@ -2,7 +2,7 @@ import { format, parse, parseISO } from "date-fns";
 import { Club, GroupTraining } from "../types";
 import { TrainingsFilter } from "./components/trainings-filter";
 import "./trainings.styles.scss";
-import { UsersCard } from "@/components/users-card/users-card";
+import { UsersCard } from "@/client-components/users-card/users-card";
 import Link from "next/link";
 
 export default async function TrainingsPage({

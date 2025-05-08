@@ -10,6 +10,7 @@ export async function middleware(request: NextRequest) {
     "Authorization",
     `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_LOCAL!}`,
   );
+  requestHeaders.set("x-current-path", request.nextUrl.pathname);
 
   // You can also set request headers in NextResponse.next
   const response = NextResponse.next({

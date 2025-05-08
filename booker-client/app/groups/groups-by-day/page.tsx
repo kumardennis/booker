@@ -4,7 +4,7 @@ import cn from "classnames";
 import { format, parse } from "date-fns";
 import { ClubGroup } from "@/app/types";
 import { days } from "@/app/const";
-import { UsersCard } from "@/components/users-card/users-card";
+import { UsersCard } from "@/client-components/users-card/users-card";
 
 export default async function GroupsPage({
   searchParams,

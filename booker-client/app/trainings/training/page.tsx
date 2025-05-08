@@ -2,9 +2,9 @@ import Link from "next/link";
 import "./training.styles.scss";
 import { format, parse, parseISO } from "date-fns";
 import { GroupTraining } from "@/app/types";
-import { UserCard } from "@/components/user-card/user-card";
-import { DetailsPageHeader } from "@/components/details-page-header/details-page-header";
-import { DetailsPageSubHeader } from "@/components/details-page-subheader/details-page-subheader";
+import { UserCard } from "@/client-components/user-card/user-card";
+import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
+import { DetailsPageSubHeader } from "@/client-components/details-page-subheader/details-page-subheader";
 
 export default async function TrainingPage({
   searchParams,

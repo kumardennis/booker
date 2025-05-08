@@ -19,4 +19,20 @@
       @include solid-button();
     }
   }
+
+  .group-details__requests {
+    display: flex;
+
+    .user-cta {
+      @include solid-button();
+    }
+
+    .user-request-accept {
+      @include solid-button();
+    }
+
+    .user-request-reject {
+      @include hollow-button();
+    }
+  }
 }

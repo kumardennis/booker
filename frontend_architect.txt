@@ -31,3 +31,28 @@ Components:
 - Profile card
 - Button
 - Pill
+
+
+Group History events:
+
+- GROUP_USER_JOIN_REQUEST   User requested to join group 
+- GROUP_USER_JOIN           User joined group
+- GROUP_USER_LEAVE_REQUEST  User requests to leave group
+- GROUP_USER_LEAVE          User leaves the group
+- GROUP_USER_WAITING_LIST   User joins the Waiting List for the group
+- GROUP_TIME_CHANGE         Group time changed
+- GROUP_OCCUPANCY_CHANGE    Group maximum occupancy changed
+- GROUP_ARCHIVED            Group got archived
+
+Users see only their history events + group's history events
+
+
+Training History events:
+
+- User requested to join training
+- User joined training
+- User marks absent
+- User joins the Waiting List for the training
+- Training time changed
+- Training maximum occupancy changed
+- Training got archived
