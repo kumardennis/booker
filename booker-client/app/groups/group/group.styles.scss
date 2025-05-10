@@ -17,6 +17,10 @@
 
     .user-cta {
       @include solid-button();
+
+      &.disabled {
+        @include disabled-button();
+      }
     }
   }
 
@@ -31,7 +35,8 @@
       @include solid-button();
     }
 
-    .user-request-reject {
+    .user-request-reject,
+    .user-request-delete {
       @include hollow-button();
     }
   }

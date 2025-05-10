@@ -46,19 +46,19 @@
   .details-page__history__notices {
     display: flex;
     justify-content: space-between;
-    width: 17rem;
+    width: 19rem;
     font-size: var(--font-size-sm);
 
     .history {
       @include hollow-button();
       cursor: pointer;
-      width: 8rem;
+      width: 9rem;
     }
 
     .notices {
       @include solid-button();
       cursor: pointer;
-      width: 8rem;
+      width: 9rem;
     }
   }
 }

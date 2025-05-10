@@ -1,3 +1,5 @@
+"use client";
+
 import { User, UserElement } from "@/app/types";
 import "./user-card.styles.scss";
 import cn from "classnames";

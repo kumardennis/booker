@@ -1,18 +1,28 @@
-@mixin solid-button(
-) {
-    background-color: var(--color-dark);
-    color: var(--color-light);
-    padding: 0.4rem 0.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
+@mixin solid-button() {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  padding: 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  cursor: pointer;
 }
 
-@mixin hollow-button(
-) {
-    background-color: var(--color-light);
-    color: var(--color-dark);
-    padding: 0.4rem 0.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    border: 0.1rem solid var(--color-dark);
+@mixin hollow-button() {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  border: 0.1rem solid var(--color-dark);
+  cursor: pointer;
+}
+
+@mixin disabled-button() {
+  background-color: var(--color-gray-dark);
+  color: var(--color-light);
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  border: 0.1rem solid var(--color-gray-dark);
+  cursor: pointer;
 }

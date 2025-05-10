@@ -6,7 +6,7 @@ import { ClubGroup } from "@/app/types";
 import { days } from "@/app/const";
 import { UsersCard } from "@/client-components/users-card/users-card";
 
-export default async function GroupsPage({
+export default async function GroupsByDayPage({
   searchParams,
 }: {
   searchParams: { club_id?: string; day?: string; group_id?: string };
@@ -81,7 +81,7 @@ export default async function GroupsPage({
                   )}
                 </span>
               }
-              subHeaderSlot={`${group.trainers[0].trainer.first_name} ${group.trainers[0].trainer.last_name}`}
+              subHeaderSlot={`${group.trainers[0]?.trainer.first_name} ${group.trainers[0]?.trainer.last_name}`}
               CTASlot={
                 <Link href={`/groups/group?group_id=${group.id}`}>
                   <div className="groups-times-day__item__cta__button">

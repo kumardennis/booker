@@ -13,6 +13,18 @@ import { DetailsPageSubHeader } from "@/client-components/details-page-subheader
 import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
 import { getClearance } from "@/app/clearance/utils/actions";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
+import { createClient } from "@/utils/supabase/server";
+import { LeaveGroupButton } from "../components/leave-group-button";
+
+const getPermissions = (
+  eventsPermissions: EventTypePermission[],
+  eventType: GroupEventType,
+  crudType: CRUDType
+) => {
+  return eventsPermissions
+    ?.find((event: EventTypePermission) => event.event_type === eventType)
+    ?.crudAllowed.find((crud) => crud.crud === crudType);
+};
 
 export default async function GroupPage({
   searchParams,
@@ -20,6 +32,10 @@ export default async function GroupPage({
   searchParams: { group_id?: string };
 }) {
   const groupId = searchParams.group_id;
+
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+  const user_uuid = user.data.user?.id;
 
   const apiQueryParams = new URLSearchParams();
 
@@ -32,6 +48,7 @@ export default async function GroupPage({
       getClearance({
         group_id: groupId,
         event_types: Object.keys(GroupEventType) as GroupEventType[],
+        user_uuid,
       }),
       fetch(`http://localhost:3000/groups/api/get-club-groups?${queryString}`),
       fetch(`http://localhost:3000/history/api/get-history`, {
@@ -46,7 +63,11 @@ export default async function GroupPage({
       }),
     ]);
 
-  const [clearanceData, groupsData, historyData] = await Promise.all([
+  const [clearanceData, groupsData, historyData]: [
+    { eventsPermissions: EventTypePermission[]; error: any },
+    any,
+    any,
+  ] = await Promise.all([
     clearanceResponse.json(),
     groupsDataResponse.json(),
     historyResponse.json(),
@@ -56,31 +77,32 @@ export default async function GroupPage({
   const group: ClubGroup | undefined = groups[0];
   const history: HistoryEvent[] = historyData.data;
 
-  const canUserGenerateTraining =
-    clearanceData.eventsPermissions
-      ?.find(
-        (event: EventTypePermission) =>
-          event.event_type === GroupEventType.GROUP_GENERATE_TRAINING
-      )
-      ?.crudAllowed.includes(CRUDType.CREATE) ?? false;
+  const canUserGenerateTraining = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_GENERATE_TRAINING,
+    CRUDType.CREATE
+  )?.forPeople.others;
+
+  const updateJoinRequestClearance = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_USER_JOIN_REQUEST,
+    CRUDType.UPDATE
+  );
+
+  const canUserDeleteJoinRequest = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_USER_JOIN_REQUEST,
+    CRUDType.DELETE
+  )?.forPeople.self;
 
   const canUserUpdateJoinRequest =
-    clearanceData.eventsPermissions
-      ?.find(
-        (event: EventTypePermission) =>
-          event.event_type === GroupEventType.GROUP_USER_JOIN_REQUEST
-      )
-      ?.crudAllowed.includes(CRUDType.UPDATE) ?? false;
+    updateJoinRequestClearance?.forPeople.others === true;
 
-  const canUserUpdateLeave =
-    clearanceData.eventsPermissions
-      ?.find(
-        (event: EventTypePermission) =>
-          event.event_type === GroupEventType.GROUP_USER_LEAVE
-      )
-      ?.crudAllowed.includes(CRUDType.UPDATE) ?? false;
-
-  console.log(clearanceData);
+  const updateLeaveClearance = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_USER_LEAVE,
+    CRUDType.UPDATE
+  );
 
   return (
     <div className="group-details">
@@ -108,7 +130,9 @@ export default async function GroupPage({
 
       <DetailsPageSubHeader
         max_occupancy={group?.max_occupancy ?? 0}
-        users_length={group?.users?.length ?? 0}
+        users_length={
+          group?.users?.filter((user) => user.is_active).length ?? 0
+        }
         history={history}
       />
 
@@ -128,12 +152,17 @@ export default async function GroupPage({
               "do MMMM HH:mm"
             )}`}
             CTASlot={
-              canUserUpdateJoinRequest && (
-                <>
-                  <div className="user-request-accept">Accept</div>{" "}
-                  <div className="user-request-reject">Reject</div>
-                </>
-              )
+              <>
+                {canUserDeleteJoinRequest && (
+                  <div className="user-request-delete">Delete</div>
+                )}
+                {canUserUpdateJoinRequest && (
+                  <>
+                    <div className="user-request-accept">Accept</div>{" "}
+                    <div className="user-request-reject">Reject</div>
+                  </>
+                )}
+              </>
             }
           />
         ))}
@@ -144,10 +173,12 @@ export default async function GroupPage({
           <UserCardContainer
             user={user.user}
             CTASlot={
-              canUserUpdateLeave && (
-                <>
-                  <div className="user-cta">Leave</div>
-                </>
+              user.is_active ? (
+                updateLeaveClearance?.forPeople.self && (
+                  <LeaveGroupButton user_uuid={user_uuid} groupId={group.id} />
+                )
+              ) : (
+                <div className="user-cta disabled">Left</div>
               )
             }
           />

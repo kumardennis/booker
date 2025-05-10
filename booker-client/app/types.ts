@@ -111,6 +111,11 @@ export enum GroupEventType {
     GROUP_GENERATE_TRAINING = "GROUP_GENERATE_TRAINING",
 }
 
+export type EventAffectsPeople = {
+    others: number[] | boolean;
+    self: boolean;
+};
+
 export const EventTypeCombined = Object.assign({}, GroupEventType);
 
 export type EventType = keyof typeof EventTypeCombined;
@@ -122,7 +127,12 @@ export enum CRUDType {
     DELETE = "DELETE",
 }
 
+export type Permission = {
+    crud: CRUDType;
+    forPeople: EventAffectsPeople;
+};
+
 export type EventTypePermission = {
     event_type: EventType;
-    crudAllowed: CRUDType[];
+    crudAllowed: Permission[];
 };
