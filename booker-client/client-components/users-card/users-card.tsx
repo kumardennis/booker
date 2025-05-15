@@ -1,6 +1,6 @@
 import { UserElement } from "@/app/types";
 import "./users-card.styles.scss";
-import { format, parse } from "date-fns";
+import cn from "classnames";
 import { ReactNode } from "react";
 
 export const UsersCard = ({
@@ -22,7 +22,11 @@ export const UsersCard = ({
 
       <div className="users-card__item__users">
         {users.map((user) => (
-          <div className="users-card__item__users__user">
+          <div
+            className={cn("users-card__item__users__user", {
+              "is-inactive": !user.is_active,
+            })}
+          >
             <img src={user.user.profile_image} alt="user" />
             {`${user.user.first_name} ${user.user.last_name}`}
           </div>

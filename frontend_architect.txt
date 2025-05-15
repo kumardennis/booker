@@ -56,3 +56,9 @@ Training History events:
 - Training time changed
 - Training maximum occupancy changed
 - Training got archived
+
+
+
+supabase commands:
+
+supabase db diff --use-migra --file

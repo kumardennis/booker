@@ -83,7 +83,7 @@ export async function getClearance(requestData: BodyType) {
         : null;
 
     for (const eventType of event_types) {
-        if (user?.is_club_admin) {
+        if (userData?.is_club_admin) {
             responseToSend.eventsPermissions.push({
                 event_type: eventType,
                 crudAllowed: [
@@ -123,6 +123,7 @@ export async function getClearance(requestData: BodyType) {
             const allowedEventTypesForUser = [
                 EventTypeCombined.GROUP_USER_LEAVE,
                 EventTypeCombined.GROUP_USER_JOIN,
+                EventTypeCombined.GROUP_USER_JOIN_REQUEST,
             ];
 
             const isAllowedEventType = groupData &&
@@ -217,7 +218,7 @@ export async function getClearance(requestData: BodyType) {
     }
     return Response.json({
         eventsPermissions: responseToSend.eventsPermissions,
-        userData,
+        isRegularUser: !userData?.is_trainer && !userData?.is_club_admin,
         error,
     });
 }

@@ -3,7 +3,14 @@ import "./user-card.styles.scss";
 import cn from "classnames";
 import { ReactNode } from "react";
 
-export const UserCardEmpty = ({}: {}) => {
+export const UserCardEmpty = ({
+  requestToJoinGroup,
+}: {
+  requestToJoinGroup: () => Promise<void>;
+}) => {
+  const joinGroupRequest = async () => {
+    requestToJoinGroup();
+  };
   return (
     <div className={cn("user-card__item empty")}>
       <div className="user-card__item__user">
@@ -14,7 +21,7 @@ export const UserCardEmpty = ({}: {}) => {
       </div>
 
       <div className="get-in-waiting-list">
-        <button>Get in Waitinglist!</button>
+        <button onClick={joinGroupRequest}>Get in Waitinglist!</button>
       </div>
     </div>
   );

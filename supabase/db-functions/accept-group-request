@@ -1,0 +1,36 @@
+declare
+_user_id int;
+_club_group_id int;
+_new_record_id int;
+_existing_record_id int;
+begin 
+
+select user_id, club_group_id 
+into _user_id, _club_group_id
+from join_group_requests 
+where id = request_id and (is_accepted = false and is_rejected = false);
+
+if _user_id is null then
+return -1;
+end if;
+
+select id into _existing_record_id
+from users_groups
+where user_id = _user_id and club_group_id = _club_group_id;
+
+if _existing_record_id is null then
+
+update join_group_requests
+set is_accepted = true
+where id = request_id;
+
+insert into users_groups (user_id, club_group_id, is_active)
+values (_user_id, _club_group_id, true)
+returning id into _new_record_id;
+
+return _new_record_id;
+
+end if;
+
+return _existing_record_id;
+end;

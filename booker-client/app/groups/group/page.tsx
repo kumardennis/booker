@@ -15,6 +15,10 @@ import { getClearance } from "@/app/clearance/utils/actions";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
 import { createClient } from "@/utils/supabase/server";
 import { LeaveGroupButton } from "../components/leave-group-button";
+import { deleteJoinGroupRequest } from "./actions";
+import toast from "react-hot-toast";
+import { DeleteJoinGroupRequestButton } from "../components/delete-join-group-request-button";
+import { UpdateJoinGroupRequestButton } from "../components/update-join-group-request-button";
 
 const getPermissions = (
   eventsPermissions: EventTypePermission[],
@@ -64,7 +68,11 @@ export default async function GroupPage({
     ]);
 
   const [clearanceData, groupsData, historyData]: [
-    { eventsPermissions: EventTypePermission[]; error: any },
+    {
+      isRegularUser: any;
+      eventsPermissions: EventTypePermission[];
+      error: any;
+    },
     any,
     any,
   ] = await Promise.all([
@@ -104,6 +112,8 @@ export default async function GroupPage({
     CRUDType.UPDATE
   );
 
+  console.log("clearanceData", clearanceData);
+
   return (
     <div className="group-details">
       <DetailsPageHeader
@@ -142,30 +152,36 @@ export default async function GroupPage({
             ...group.users?.map((user) => user.user.id),
             ...group.requests?.map((request) => request.user.id),
           ]}
+          groupId={group.id}
         />
-        {group.requests?.map((request) => (
-          <UserCard
-            user={request.user}
-            isRequest
-            extraInfoSlot={`Since ${format(
-              parseISO(request.created_at.toString()),
-              "do MMMM HH:mm"
-            )}`}
-            CTASlot={
-              <>
-                {canUserDeleteJoinRequest && (
-                  <div className="user-request-delete">Delete</div>
-                )}
-                {canUserUpdateJoinRequest && (
-                  <>
-                    <div className="user-request-accept">Accept</div>{" "}
-                    <div className="user-request-reject">Reject</div>
-                  </>
-                )}
-              </>
-            }
-          />
-        ))}
+        {group.requests
+          ?.filter((request) => !request.is_accepted && !request.is_rejected)
+          .map((request) => (
+            <UserCard
+              user={request.user}
+              isRequest
+              extraInfoSlot={`Since ${format(
+                parseISO(request.created_at.toString()),
+                "do MMMM HH:mm"
+              )}`}
+              CTASlot={
+                <>
+                  {clearanceData.isRegularUser && canUserDeleteJoinRequest && (
+                    <DeleteJoinGroupRequestButton
+                      user_uuid={user_uuid}
+                      groupId={group.id}
+                    />
+                  )}
+                  {!clearanceData.isRegularUser && canUserUpdateJoinRequest && (
+                    <UpdateJoinGroupRequestButton
+                      student_id={request.user.id}
+                      groupId={group.id}
+                    />
+                  )}
+                </>
+              }
+            />
+          ))}
       </div>
 
       <div className="group-details__users">
@@ -178,7 +194,9 @@ export default async function GroupPage({
                   <LeaveGroupButton user_uuid={user_uuid} groupId={group.id} />
                 )
               ) : (
-                <div className="user-cta disabled">Left</div>
+                <div className="user-cta disabled">
+                  Ask club admin yourself to add you back
+                </div>
               )
             }
           />

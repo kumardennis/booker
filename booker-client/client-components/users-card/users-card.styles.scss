@@ -1,63 +1,67 @@
 @import "../../app/mixins.scss";
 
-    .users-card__item {
-        margin-top: 2rem;
-        margin-right: 2rem;
-        width: 15rem;
-        min-height: 10rem;
-        box-shadow: 0 0 1rem 0.1rem rgba(0, 0, 0, 0.2);
-        border-radius: 0.5rem;
-        padding: 1rem;
+.users-card__item {
+  margin-top: 2rem;
+  margin-right: 2rem;
+  width: 15rem;
+  min-height: 10rem;
+  box-shadow: 0 0 1rem 0.1rem rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
 
-        .users-card__item__title {
-            text-align: left;
+  .users-card__item__title {
+    text-align: left;
 
-            &> span {
-                font-size: var(--font-size-lg);
-                font-weight: 600;
-            }
-        }
-
-        hr {
-            height: 0.1rem;
-            background-color: var(--color-gray);
-            margin: 0.2rem 0;
-        }
-
-        .users-card__item__subtitle {
-            color: var(--color-gray-dark);
-        }
-
-        .users-card__item__users {
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            justify-content: space-evenly;
-            margin-top: 1rem;
-
-            .users-card__item__users__user {
-                display: flex;
-                align-items: center;
-                justify-content: start;
-                padding: 0.5rem 0;
-
-                img {
-                    width: 1.5rem;
-                    height: 1.5rem;
-                    border-radius: 50%;
-                    margin-right: 0.5rem;
-                }
-            }
-        }
-
-        .users-card__item__cta {
-            width: 100%;
-
-            .groups-times-day__item__cta__button {
-                @include solid-button();
-
-                line-height: 1;
-                margin-top: 2rem;
-            }
-        }
+    & > span {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
     }
+  }
+
+  hr {
+    height: 0.1rem;
+    background-color: var(--color-gray);
+    margin: 0.2rem 0;
+  }
+
+  .users-card__item__subtitle {
+    color: var(--color-gray-dark);
+  }
+
+  .users-card__item__users {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-evenly;
+    margin-top: 1rem;
+
+    .users-card__item__users__user {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      padding: 0.5rem 0;
+
+      &.is-inactive {
+        color: var(--color-gray-dark);
+      }
+
+      img {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .users-card__item__cta {
+    width: 100%;
+
+    .groups-times-day__item__cta__button {
+      @include solid-button();
+
+      line-height: 1;
+      margin-top: 2rem;
+    }
+  }
+}

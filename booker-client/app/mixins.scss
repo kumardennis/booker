@@ -1,7 +1,7 @@
 @mixin solid-button() {
   background-color: var(--color-dark);
   color: var(--color-light);
-  padding: 0.4rem 1.5rem;
+  padding: 0.4rem 0.5rem;
   border-radius: 0.5rem;
   text-align: center;
   cursor: pointer;

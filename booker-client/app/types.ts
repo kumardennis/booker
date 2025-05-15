@@ -55,6 +55,7 @@ export type User = {
 };
 
 export type UserElement = {
+    is_active: any;
     id: number;
     user: User;
 };
@@ -101,7 +102,7 @@ export type HistoryEvent = {
 export enum GroupEventType {
     GROUP_USER_JOIN_REQUEST = "GROUP_USER_JOIN_REQUEST",
     GROUP_USER_JOIN = "GROUP_USER_JOIN",
-    GROUP_USER_LEAVE_REQUEST = "GROUP_USER_LEAVE_REQUEST",
+    // GROUP_USER_LEAVE_REQUEST = "GROUP_USER_LEAVE_REQUEST",
     GROUP_USER_LEAVE = "GROUP_USER_LEAVE",
     GROUP_USER_WAITING_LIST = "GROUP_USER_WAITING_LIST",
     GROUP_TIME_CHANGE = "GROUP_TIME_CHANGE",

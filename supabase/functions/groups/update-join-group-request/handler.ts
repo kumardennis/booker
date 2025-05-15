@@ -9,7 +9,7 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { user_id, group_id } = await req.json();
+    const { user_id, group_id, is_accepted, is_rejected } = await req.json();
 
     if (!confirmedRequiredParams([user_id, group_id])) {
       return new Response(JSON.stringify(errorResponseData), {
@@ -17,20 +17,25 @@ export const handler = async (req: Request) => {
       });
     }
 
-    const { data: existsData, error: existsError } = await supabase
+    const { data: requestData, error: requestError } = await supabase
       .from("join_group_requests")
-      .select("*")
-      .match({
+      .select("id").match({
         ...(user_id && { user_id }),
         ...(group_id && { club_group_id: group_id }),
       }).single();
 
-    if (existsData && !existsError) {
+    const dbFunctionToCall = is_accepted
+      ? "accept_join_group_request"
+      : is_rejected
+      ? "reject_join_group_request"
+      : null;
+
+    if (!dbFunctionToCall) {
       return new Response(
         JSON.stringify({
           isRequestSuccessfull: false,
           data: null,
-          error: "Join group request already exists",
+          error: "No action specified",
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -38,17 +43,17 @@ export const handler = async (req: Request) => {
       );
     }
 
-    const { data: addedData, error: addedError } = await supabase
-      .from("join_group_requests")
-      .insert({
-        user_id,
-        club_group_id: group_id,
-      }).select();
+    const { data: dbData, error: dbError } = await supabase.rpc(
+      dbFunctionToCall,
+      {
+        request_id: requestData.id,
+      },
+    );
 
     const responseData = {
-      isRequestSuccessfull: addedError === null,
-      data: addedData,
-      error: addedError,
+      isRequestSuccessfull: dbError === null,
+      data: dbData,
+      error: dbError,
     };
 
     return new Response(JSON.stringify(responseData), {

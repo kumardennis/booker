@@ -19,36 +19,16 @@ export const handler = async (req: Request) => {
 
     const { data: existsData, error: existsError } = await supabase
       .from("join_group_requests")
-      .select("*")
+      .delete()
       .match({
         ...(user_id && { user_id }),
         ...(group_id && { club_group_id: group_id }),
-      }).single();
-
-    if (existsData && !existsError) {
-      return new Response(
-        JSON.stringify({
-          isRequestSuccessfull: false,
-          data: null,
-          error: "Join group request already exists",
-        }),
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-    }
-
-    const { data: addedData, error: addedError } = await supabase
-      .from("join_group_requests")
-      .insert({
-        user_id,
-        club_group_id: group_id,
-      }).select();
+      });
 
     const responseData = {
-      isRequestSuccessfull: addedError === null,
-      data: addedData,
-      error: addedError,
+      isRequestSuccessfull: existsData === null,
+      data: existsData,
+      error: existsError,
     };
 
     return new Response(JSON.stringify(responseData), {
