@@ -1,10 +1,28 @@
 import Link from "next/link";
 import "./training.styles.scss";
 import { format, parse, parseISO } from "date-fns";
-import { GroupTraining } from "@/app/types";
+import {
+  CRUDType,
+  GroupEventType,
+  GroupTraining,
+  HistoryEvent,
+  TrainingEventType,
+} from "@/app/types";
 import { UserCard } from "@/client-components/user-card/user-card";
 import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
 import { DetailsPageSubHeader } from "@/client-components/details-page-subheader/details-page-subheader";
+import { getClearanceForTraining } from "@/app/clearance/utils/actions";
+import { getHistory } from "@/app/history/actions";
+import { getTrainings } from "./actions";
+import { createClient } from "@/utils/supabase/server";
+import { getPermissions } from "@/app/clearance/utils/helpers";
+import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
+import { DeleteJoinGroupRequestButton } from "@/app/groups/components/delete-join-group-request-button";
+import { UpdateJoinGroupRequestButton } from "@/app/groups/components/update-join-group-request-button";
+import { DeleteJoinTrainingRequestButton } from "./components/delete-join-training-request-button";
+import { UpdateJoinTrainingRequestButton } from "./components/update-join-training-request-button";
+import { UserCardContainer } from "@/client-components/user-card/user-card-container";
+import { LeaveTrainingButton } from "./components/leave-training-button";
 
 export default async function TrainingPage({
   searchParams,
@@ -17,25 +35,48 @@ export default async function TrainingPage({
 
   if (training_id) apiQueryParams.append("training_id", training_id);
 
-  const response = await fetch(
-    `http://localhost:3000/trainings/api/get-group-trainings`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        training_id,
-      }),
-      cache: "no-store",
-    }
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+  const user_uuid = user.data.user?.id;
+
+  const [clearanceData, trainingData, historyData] = await Promise.all([
+    getClearanceForTraining({
+      training_id: training_id,
+      event_types: Object.keys(GroupEventType) as GroupEventType[],
+      user_uuid,
+    }),
+    getTrainings(Number(training_id)),
+    getHistory(Number(training_id)),
+  ]);
+
+  const trainings: GroupTraining[] = trainingData.data;
+  const training: GroupTraining | undefined = trainings[0];
+  const history: HistoryEvent[] = historyData.data;
+
+  const updateJoinRequestClearance = getPermissions(
+    clearanceData.eventsPermissions,
+    TrainingEventType.TRAINING_USER_JOIN_REQUEST,
+    CRUDType.UPDATE
   );
 
-  const data = await response.json();
+  const canUserDeleteJoinRequest = getPermissions(
+    clearanceData.eventsPermissions,
+    TrainingEventType.TRAINING_USER_JOIN_REQUEST,
+    CRUDType.DELETE
+  )?.forPeople.self;
 
-  const trainings: GroupTraining[] = data.data;
+  const canUserUpdateJoinRequest =
+    updateJoinRequestClearance?.forPeople.others === true;
 
-  const training: GroupTraining | undefined = trainings[0];
+  const updateLeaveClearance = getPermissions(
+    clearanceData.eventsPermissions,
+    TrainingEventType.TRAINING_USER_LEAVE,
+    CRUDType.UPDATE
+  );
+
+  console.log("clearanceData", clearanceData);
+  console.log("historyData", historyData);
+  console.log("trainingData", trainingData);
 
   return (
     <div className="training-details">
@@ -69,16 +110,64 @@ export default async function TrainingPage({
       <DetailsPageSubHeader
         max_occupancy={training?.max_occupancy ?? 0}
         users_length={training?.users?.length ?? 0}
+        history={history}
       />
+
+      <div className="training-details__requests">
+        <UserCardEmptyContainer
+          userIds={[
+            ...training.users?.map((user) => user.user.id),
+            ...training.requests?.map((request) => request.user.id),
+          ]}
+          trainingId={training.id}
+        />
+        {training.requests
+          ?.filter((request) => !request.is_accepted && !request.is_rejected)
+          .map((request) => (
+            <UserCard
+              user={request.user}
+              isRequest
+              extraInfoSlot={`Since ${format(
+                parseISO(request.created_at.toString()),
+                "do MMMM HH:mm"
+              )}`}
+              CTASlot={
+                <>
+                  {clearanceData.isRegularUser && canUserDeleteJoinRequest && (
+                    <DeleteJoinTrainingRequestButton
+                      user_uuid={user_uuid}
+                      trainingId={training.id}
+                    />
+                  )}
+                  {!clearanceData.isRegularUser && canUserUpdateJoinRequest && (
+                    <UpdateJoinTrainingRequestButton
+                      student_id={request.user.id}
+                      trainingId={training.id}
+                    />
+                  )}
+                </>
+              }
+            />
+          ))}
+      </div>
 
       <div className="training-details__users">
         {training.users?.map((user) => (
-          <UserCard
-            user={user}
+          <UserCardContainer
+            user={user.user}
             CTASlot={
-              <>
-                <div className="user-cta">CTA</div>
-              </>
+              user.is_active ? (
+                updateLeaveClearance?.forPeople.self && (
+                  <LeaveTrainingButton
+                    user_uuid={user_uuid}
+                    trainingId={training.id}
+                  />
+                )
+              ) : (
+                <div className="user-cta disabled">
+                  Ask club admin yourself to add you back
+                </div>
+              )
             }
           />
         ))}

@@ -8,10 +8,12 @@ import { useRouter } from "next/navigation";
 export const UserCardEmptyContainer = ({
   userIds,
   groupId,
+  trainingId,
   ...props
 }: {
   userIds: number[];
-  groupId: number;
+  groupId?: number;
+  trainingId?: number;
 }) => {
   const router = useRouter();
 
@@ -20,20 +22,27 @@ export const UserCardEmptyContainer = ({
     return null;
   }
 
-  const requestToJoinGroup = async () => {
-    const response = await fetch(
-      "http://localhost:3000/groups/api/join-group-request",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: user?.id,
-          group_id: groupId,
-        }),
-      }
-    );
+  const urlToCall = trainingId
+    ? "http://localhost:3000/trainings/api/join-training-request"
+    : groupId
+      ? "http://localhost:3000/groups/api/join-group-request"
+      : null;
+
+  const requestToJoin = async () => {
+    if (!urlToCall) {
+      throw new Error("No url to call");
+    }
+    const response = await fetch(urlToCall, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: user?.id,
+        ...(groupId && { group_id: groupId }),
+        ...(trainingId && { training_id: trainingId }),
+      }),
+    });
 
     const data = await response.json();
     if (!data.isRequestSuccessfull) {
@@ -43,12 +52,12 @@ export const UserCardEmptyContainer = ({
 
       return;
     }
-    toast.success("Join group request sent", {
+    toast.success("Join request sent", {
       icon: "✅",
     });
 
     router.refresh();
   };
 
-  return <UserCardEmpty requestToJoinGroup={requestToJoinGroup} {...props} />;
+  return <UserCardEmpty requestToJoin={requestToJoin} {...props} />;
 };

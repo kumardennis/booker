@@ -18,4 +18,21 @@
       @include solid-button();
     }
   }
+
+  .training-details__requests {
+    display: flex;
+
+    .user-cta {
+      @include solid-button();
+    }
+
+    .user-request-accept {
+      @include solid-button();
+    }
+
+    .user-request-reject,
+    .user-request-delete {
+      @include hollow-button();
+    }
+  }
 }

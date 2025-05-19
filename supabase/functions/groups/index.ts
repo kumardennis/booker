@@ -6,7 +6,7 @@ import {
 import { corsHeaders } from "../_shared/cors.ts";
 
 import { handler as get_club_groups } from "./get-club-groups/handler.ts";
-import { handler as update_club_groups_user } from "./update-club-groups-user/handler.ts";
+import { handler as update_club_group_user } from "./update-club-group-user/handler.ts";
 import { handler as create_join_group_request } from "./create-join-group-request/handler.ts";
 import { handler as delete_join_group_request } from "./delete-join-group-request/handler.ts";
 import { handler as update_join_group_request } from "./update-join-group-request/handler.ts";
@@ -15,7 +15,7 @@ console.log("Setting up localdev");
 
 const handlers = {
   "get-club-groups": get_club_groups,
-  "update-club-groups-user": update_club_groups_user,
+  "update-club-groups-user": update_club_group_user,
   "create-join-group-request": create_join_group_request,
   "delete-join-group-request": delete_join_group_request,
   "update-join-group-request": update_join_group_request,

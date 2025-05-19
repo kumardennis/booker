@@ -127,3 +127,16 @@ export async function rejectJoinGroupRequest(
     }
     return data;
 }
+
+export async function getClubGroups(
+    queryString: string = "",
+) {
+    const response = await fetch(
+        `http://localhost:3000/groups/api/get-club-groups?${queryString}`,
+    );
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(data.error);
+    }
+    return data;
+}

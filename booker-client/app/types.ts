@@ -77,6 +77,13 @@ export type JoinGroupRequest = UserElement & {
     comments?: string;
 };
 
+export type JoinTrainingRequest = UserElement & {
+    created_at: Date;
+    is_accepted: boolean;
+    is_rejected: boolean;
+    comments?: string;
+};
+
 export type GroupTraining = {
     id: number;
     created_at: Date;
@@ -88,6 +95,7 @@ export type GroupTraining = {
     club_groups: ClubGroup;
     users: UserElementTraining[];
     trainers: TrainerElement[];
+    requests: JoinTrainingRequest[];
 };
 
 export type HistoryEvent = {
@@ -112,12 +120,27 @@ export enum GroupEventType {
     GROUP_GENERATE_TRAINING = "GROUP_GENERATE_TRAINING",
 }
 
+export enum TrainingEventType {
+    TRAINING_USER_JOIN_REQUEST = "TRAINING_USER_JOIN_REQUEST",
+    TRAINING_USER_JOIN = "TRAINING_USER_JOIN",
+    TRAINING_USER_LEAVE = "TRAINING_USER_LEAVE",
+    TRAINING_USER_WAITING_LIST = "TRAINING_USER_WAITING_LIST",
+    TRAINING_TIME_CHANGE = "TRAINING_TIME_CHANGE",
+    TRAINING_OCCUPANCY_CHANGE = "TRAINING_OCCUPANCY_CHANGE",
+    TRAINING_ARCHIVED = "TRAINING_ARCHIVED",
+    TRAINING_OTHERS = "TRAINING_OTHERS",
+}
+
 export type EventAffectsPeople = {
     others: number[] | boolean;
     self: boolean;
 };
 
-export const EventTypeCombined = Object.assign({}, GroupEventType);
+export const EventTypeCombined = Object.assign(
+    {},
+    GroupEventType,
+    TrainingEventType,
+);
 
 export type EventType = keyof typeof EventTypeCombined;
 

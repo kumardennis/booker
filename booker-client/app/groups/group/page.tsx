@@ -11,24 +11,16 @@ import { UserCard } from "@/client-components/user-card/user-card";
 import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
 import { DetailsPageSubHeader } from "@/client-components/details-page-subheader/details-page-subheader";
 import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
-import { getClearance } from "@/app/clearance/utils/actions";
+import { getClearanceForGroup } from "@/app/clearance/utils/actions";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
 import { createClient } from "@/utils/supabase/server";
 import { LeaveGroupButton } from "../components/leave-group-button";
-import { deleteJoinGroupRequest } from "./actions";
+import { deleteJoinGroupRequest, getClubGroups } from "./actions";
 import toast from "react-hot-toast";
 import { DeleteJoinGroupRequestButton } from "../components/delete-join-group-request-button";
 import { UpdateJoinGroupRequestButton } from "../components/update-join-group-request-button";
-
-const getPermissions = (
-  eventsPermissions: EventTypePermission[],
-  eventType: GroupEventType,
-  crudType: CRUDType
-) => {
-  return eventsPermissions
-    ?.find((event: EventTypePermission) => event.event_type === eventType)
-    ?.crudAllowed.find((crud) => crud.crud === crudType);
-};
+import { getHistory } from "@/app/history/actions";
+import { getPermissions } from "@/app/clearance/utils/helpers";
 
 export default async function GroupPage({
   searchParams,
@@ -47,38 +39,14 @@ export default async function GroupPage({
 
   const queryString = apiQueryParams.toString();
 
-  const [clearanceResponse, groupsDataResponse, historyResponse] =
-    await Promise.all([
-      getClearance({
-        group_id: groupId,
-        event_types: Object.keys(GroupEventType) as GroupEventType[],
-        user_uuid,
-      }),
-      fetch(`http://localhost:3000/groups/api/get-club-groups?${queryString}`),
-      fetch(`http://localhost:3000/history/api/get-history`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...(groupId && { group_id: groupId }),
-        }),
-        cache: "no-store",
-      }),
-    ]);
-
-  const [clearanceData, groupsData, historyData]: [
-    {
-      isRegularUser: any;
-      eventsPermissions: EventTypePermission[];
-      error: any;
-    },
-    any,
-    any,
-  ] = await Promise.all([
-    clearanceResponse.json(),
-    groupsDataResponse.json(),
-    historyResponse.json(),
+  const [clearanceData, groupsData, historyData] = await Promise.all([
+    getClearanceForGroup({
+      group_id: groupId,
+      event_types: Object.keys(GroupEventType) as GroupEventType[],
+      user_uuid,
+    }),
+    getClubGroups(queryString),
+    getHistory(Number(groupId)),
   ]);
 
   const groups: ClubGroup[] = groupsData.data;
@@ -111,8 +79,6 @@ export default async function GroupPage({
     GroupEventType.GROUP_USER_LEAVE,
     CRUDType.UPDATE
   );
-
-  console.log("clearanceData", clearanceData);
 
   return (
     <div className="group-details">

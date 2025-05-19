@@ -4,12 +4,12 @@ import cn from "classnames";
 import { ReactNode } from "react";
 
 export const UserCardEmpty = ({
-  requestToJoinGroup,
+  requestToJoin,
 }: {
-  requestToJoinGroup: () => Promise<void>;
+  requestToJoin: () => Promise<void>;
 }) => {
-  const joinGroupRequest = async () => {
-    requestToJoinGroup();
+  const joinRequest = async () => {
+    requestToJoin();
   };
   return (
     <div className={cn("user-card__item empty")}>
@@ -21,7 +21,7 @@ export const UserCardEmpty = ({
       </div>
 
       <div className="get-in-waiting-list">
-        <button onClick={joinGroupRequest}>Get in Waitinglist!</button>
+        <button onClick={joinRequest}>Get in Waitinglist!</button>
       </div>
     </div>
   );

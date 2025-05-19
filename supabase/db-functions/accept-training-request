@@ -1,0 +1,36 @@
+declare
+_user_id int;
+_training_id int;
+_new_record_id int;
+_existing_record_id int;
+begin 
+
+select user_id, training_id 
+into _user_id, _training_id
+from join_training_requests 
+where id = request_id and (is_accepted = false and is_rejected = false);
+
+if _user_id is null then
+return -1;
+end if;
+
+select id into _existing_record_id
+from users_trainings
+where user_id = _user_id and training_id = _training_id;
+
+if _existing_record_id is null then
+
+update join_training_requests
+set is_accepted = true
+where id = request_id;
+
+insert into users_trainings (user_id, training_id, is_active)
+values (_user_id, _training_id, true)
+returning id into _new_record_id;
+
+return _new_record_id;
+
+end if;
+
+return _existing_record_id;
+end;
