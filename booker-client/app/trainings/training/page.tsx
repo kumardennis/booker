@@ -42,7 +42,7 @@ export default async function TrainingPage({
   const [clearanceData, trainingData, historyData] = await Promise.all([
     getClearanceForTraining({
       training_id: training_id,
-      event_types: Object.keys(GroupEventType) as GroupEventType[],
+      event_types: Object.keys(TrainingEventType) as GroupEventType[],
       user_uuid,
     }),
     getTrainings(Number(training_id)),

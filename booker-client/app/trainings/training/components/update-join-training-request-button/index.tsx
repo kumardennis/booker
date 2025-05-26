@@ -3,6 +3,7 @@
 import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
+import { acceptJoinTrainingRequest } from "../../actions";
 
 type PropTypes = {
   student_id: number | undefined;
@@ -16,19 +17,19 @@ export const UpdateJoinTrainingRequestButton = ({
   const router = useRouter();
 
   const acceptRequest = async () => {
-    // const data = await acceptJoinGroupRequest(student_id, groupId);
-    // if (data.error) {
-    //   toast.error(data.error, {
-    //     icon: "❌",
-    //   });
-    //   return;
-    // }
-    // if (data.isRequestSuccessfull) {
-    //   toast.success("Join group request accepted", {
-    //     icon: "✅",
-    //   });
-    //   router.refresh();
-    // }
+    const data = await acceptJoinTrainingRequest(student_id, trainingId);
+    if (data.error) {
+      toast.error(data.error, {
+        icon: "❌",
+      });
+      return;
+    }
+    if (data.isRequestSuccessfull) {
+      toast.success("Join training request accepted", {
+        icon: "✅",
+      });
+      router.refresh();
+    }
   };
 
   const rejectRequest = async () => {
