@@ -1,6 +1,5 @@
-import Link from "next/link";
 import "./training.styles.scss";
-import { format, parse, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   CRUDType,
   GroupEventType,
@@ -17,8 +16,6 @@ import { getTrainings } from "./actions";
 import { createClient } from "@/utils/supabase/server";
 import { getPermissions } from "@/app/clearance/utils/helpers";
 import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
-import { DeleteJoinGroupRequestButton } from "@/app/groups/components/delete-join-group-request-button";
-import { UpdateJoinGroupRequestButton } from "@/app/groups/components/update-join-group-request-button";
 import { DeleteJoinTrainingRequestButton } from "./components/delete-join-training-request-button";
 import { UpdateJoinTrainingRequestButton } from "./components/update-join-training-request-button";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
@@ -133,15 +130,17 @@ export default async function TrainingPage({
               )}`}
               CTASlot={
                 <>
-                  {clearanceData.isRegularUser && canUserDeleteJoinRequest && (
-                    <DeleteJoinTrainingRequestButton
-                      user_uuid={user_uuid}
-                      trainingId={training.id}
-                    />
-                  )}
+                  {clearanceData.isRegularUser &&
+                    request.user?.userId === user_uuid &&
+                    canUserDeleteJoinRequest && (
+                      <DeleteJoinTrainingRequestButton
+                        user_uuid={user_uuid}
+                        trainingId={training.id}
+                      />
+                    )}
                   {!clearanceData.isRegularUser && canUserUpdateJoinRequest && (
                     <UpdateJoinTrainingRequestButton
-                      student_id={request.user.id}
+                      studentId={request.user.id}
                       trainingId={training.id}
                     />
                   )}

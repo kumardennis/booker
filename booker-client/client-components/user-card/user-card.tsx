@@ -8,16 +8,23 @@ import { ReactNode } from "react";
 export const UserCard = ({
   user,
   CTASlot,
+  isNotActive,
   extraInfoSlot,
   isRequest = false,
 }: {
   user: User;
   CTASlot: ReactNode;
+  isNotActive?: boolean;
   isRequest?: boolean;
   extraInfoSlot?: ReactNode | string;
 }) => {
   return (
-    <div className={cn("user-card__item", { "is-request": isRequest })}>
+    <div
+      className={cn("user-card__item", {
+        "is-request": isRequest,
+        "is-inactive": isNotActive,
+      })}
+    >
       <div className="user-card__item__user">
         <img src={user.profile_image} alt="user" />
         {`${user.first_name} ${user.last_name}`}

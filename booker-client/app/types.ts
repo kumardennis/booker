@@ -107,8 +107,19 @@ export type HistoryEvent = {
     training_id?: number;
 };
 
+export type Notice = {
+    id: number;
+    created_at: Date;
+    notice: string;
+    group_id?: number;
+    training_id?: number;
+    user_id?: number;
+    user?: User;
+};
+
 export enum GroupEventType {
     GROUP_USER_JOIN_REQUEST = "GROUP_USER_JOIN_REQUEST",
+    GROUP_USER_JOIN_REQUEST_DELETE = "GROUP_USER_JOIN_REQUEST_DELETE",
     GROUP_USER_JOIN = "GROUP_USER_JOIN",
     // GROUP_USER_LEAVE_REQUEST = "GROUP_USER_LEAVE_REQUEST",
     GROUP_USER_LEAVE = "GROUP_USER_LEAVE",
@@ -122,6 +133,7 @@ export enum GroupEventType {
 
 export enum TrainingEventType {
     TRAINING_USER_JOIN_REQUEST = "TRAINING_USER_JOIN_REQUEST",
+    TRAINING_USER_JOIN_REQUEST_DELETE = "TRAINING_USER_JOIN_REQUEST_DELETE",
     TRAINING_USER_JOIN = "TRAINING_USER_JOIN",
     TRAINING_USER_LEAVE = "TRAINING_USER_LEAVE",
     TRAINING_USER_WAITING_LIST = "TRAINING_USER_WAITING_LIST",

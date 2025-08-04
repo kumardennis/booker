@@ -4,6 +4,7 @@ import { TrainingsFilter } from "./components/trainings-filter";
 import "./trainings.styles.scss";
 import { UsersCard } from "@/client-components/users-card/users-card";
 import Link from "next/link";
+import { getGroupTrainings } from "./actions";
 
 export default async function TrainingsPage({
   searchParams,
@@ -25,34 +26,18 @@ export default async function TrainingsPage({
   const clubId = searchParams.club_id ?? "1";
   const day = searchParams.day ?? "MONDAY";
   const groupId = searchParams.group_id ?? "1";
-  const date = searchParams.date ?? todayDate;
-  const month = searchParams.month ?? todayMonth;
-  const year = searchParams.year ?? todayYear;
-
-  console.log({
-    club_id: clubId,
-    day,
-    group_id: groupId,
-    date,
-    month,
-    year,
-  });
+  const date = searchParams.date ?? todayDate.toString();
+  const month = searchParams.month ?? todayMonth.toString();
+  const year = searchParams.year ?? todayYear.toString();
 
   const [response, responseClubs] = await Promise.all([
-    fetch(`http://localhost:3000/trainings/api/get-group-trainings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        club_id: clubId,
-        day,
-        group_id: groupId,
-        date,
-        month,
-        year,
-      }),
-      cache: "no-store",
+    getGroupTrainings({
+      club_id: clubId,
+      day,
+      group_id: groupId,
+      date,
+      month,
+      year,
     }),
     fetch("http://localhost:3000/clubs/api/get-clubs"),
   ]);
@@ -61,9 +46,7 @@ export default async function TrainingsPage({
 
   const clubs: Club[] = dataJSON.data;
 
-  const data = await response.json();
-
-  const trainings: GroupTraining[] = data.data;
+  const trainings: GroupTraining[] = response;
 
   return (
     <div className="group-trainings">

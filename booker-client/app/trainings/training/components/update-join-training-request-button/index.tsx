@@ -4,20 +4,24 @@ import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
 import { acceptJoinTrainingRequest } from "../../actions";
+import { useHistory } from "@/app/hooks/useHistory";
+import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 
 type PropTypes = {
-  student_id: number | undefined;
+  studentId: number | undefined;
   trainingId: number | number;
 };
 
 export const UpdateJoinTrainingRequestButton = ({
-  student_id,
+  studentId,
   trainingId,
 }: PropTypes) => {
   const router = useRouter();
+  const { createEvent } = useHistory();
+  const user = useUserProfileStore((state) => state.user);
 
   const acceptRequest = async () => {
-    const data = await acceptJoinTrainingRequest(student_id, trainingId);
+    const data = await acceptJoinTrainingRequest(studentId, trainingId);
     if (data.error) {
       toast.error(data.error, {
         icon: "❌",
@@ -28,6 +32,15 @@ export const UpdateJoinTrainingRequestButton = ({
       toast.success("Join training request accepted", {
         icon: "✅",
       });
+
+      await createEvent({
+        eventText: `${user?.first_name} ${user?.last_name} deleted the request to join training`,
+        eventType: "TRAINING_USER_JOIN",
+        trainingId: Number(trainingId),
+        fromId: user?.id,
+        toId: studentId,
+      });
+
       router.refresh();
     }
   };

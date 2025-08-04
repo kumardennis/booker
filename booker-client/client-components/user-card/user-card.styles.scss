@@ -18,6 +18,10 @@
     background-color: var(--color-gray);
   }
 
+  &.is-inactive {
+    background-color: var(--color-gray-dark);
+  }
+
   .user-card__item__title {
     text-align: center;
 

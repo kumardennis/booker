@@ -9,21 +9,21 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { group_id, training_id, user_id } = await req.json();
+    const { group_id, training_id, user_id, notice } = await req.json();
 
-    if (!confirmedRequiredParams([])) {
+    if (!confirmedRequiredParams([user_id, notice])) {
       return new Response(JSON.stringify(errorResponseData), {
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const { data: users, error } = await supabase
-      .from("notices")
-      .select("*").match({
+      .from("notices").insert({
+        notice,
         ...(group_id && { group_id }),
         ...(training_id && { training_id }),
         ...(user_id && { user_id }),
-      }).order("created_at", { ascending: false });
+      }).select("*");
 
     const responseData = {
       isRequestSuccessfull: error === null,

@@ -2,14 +2,12 @@ import { headers } from "next/headers";
 import { type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const requestData = request.body ? await request.json() : {};
-
-    const { club_id } = requestData;
+    const club_id = request.nextUrl.searchParams.get("club_id");
 
     const headersList = await headers();
     const auth = headersList.get("Authorization");
 
-    const body = { club_id: undefined };
+    const body: { club_id?: string } = {};
 
     if (club_id) {
         body.club_id = club_id;

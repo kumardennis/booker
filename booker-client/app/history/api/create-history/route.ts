@@ -1,62 +1,55 @@
+import { EventType } from "@/app/types";
 import { headers } from "next/headers";
 import { type NextRequest } from "next/server";
 
 type BodyType = {
-    club_id: string | undefined;
-    day: string | undefined;
     training_id: string | undefined;
     group_id: string | undefined;
-    till_date: string | undefined;
-    from_date: string | undefined;
-    user_id: string | undefined;
+    from_id: string | undefined;
+    to_id: string | undefined;
+    event: string;
+    event_type: EventType;
 };
 
 export async function POST(request: NextRequest) {
     const requestData = request.body ? await request.json() : {};
 
     const {
-        club_id,
-        day,
-        date,
-        month,
-        year,
         group_id,
-        till_date,
         training_id,
-        user_id,
+        from_id,
+        to_id,
+        event,
+        event_type,
     } = requestData;
 
     const headersList = await headers();
     const auth = headersList.get("Authorization");
 
     const body: BodyType = {
-        club_id: undefined,
-        day: undefined,
         training_id: undefined,
         group_id: undefined,
-        till_date: undefined,
-        from_date: undefined,
-        user_id: undefined,
+        from_id: undefined,
+        to_id: undefined,
+        event: event ?? "",
+        event_type: event_type ?? "",
     };
 
-    const dateForQuery = year && month && date && day
-        ? (day && !date)
-            ? `${year}-${month.toString().padStart(2, "0")}-01`
-            : `${year}-${month.toString().padStart(2, "0")}-${
-                date.toString().padStart(2, "0")
-            }`
-        : undefined;
-
-    body.club_id = club_id;
-    body.day = !date ? day : undefined;
     body.training_id = training_id;
     body.group_id = group_id;
-    body.from_date = dateForQuery;
-    body.till_date = till_date;
-    body.user_id = user_id;
+    body.from_id = from_id;
+    body.to_id = to_id;
+    body.event = event;
+    body.event_type = event_type;
+    if (!body.event || !body.event_type) {
+        return Response.json({
+            isRequestSuccessfull: false,
+            error: "Event and event_type are required",
+        });
+    }
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/trainings/get-group-trainings",
+        "http://127.0.0.1:54321/functions/v1/history/create-history",
         {
             method: "POST",
             headers: {

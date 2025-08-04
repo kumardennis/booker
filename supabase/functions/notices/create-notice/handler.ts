@@ -9,21 +9,24 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { group_id, training_id, user_id } = await req.json();
+    const { group_id, training_id, from_id, to_id, event, event_type } =
+      await req.json();
 
-    if (!confirmedRequiredParams([])) {
+    if (!confirmedRequiredParams([event, event_type])) {
       return new Response(JSON.stringify(errorResponseData), {
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const { data: users, error } = await supabase
-      .from("notices")
-      .select("*").match({
+      .from("history_events").insert({
+        event,
+        event_type,
         ...(group_id && { group_id }),
         ...(training_id && { training_id }),
-        ...(user_id && { user_id }),
-      }).order("created_at", { ascending: false });
+        ...(from_id && { from_id }),
+        ...(to_id && { to_id }),
+      }).select("*");
 
     const responseData = {
       isRequestSuccessfull: error === null,

@@ -4,6 +4,7 @@ import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 import { UserCardEmpty } from "./user-card-empty";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useHistory } from "@/app/hooks/useHistory";
 
 export const UserCardEmptyContainer = ({
   userIds,
@@ -16,6 +17,8 @@ export const UserCardEmptyContainer = ({
   trainingId?: number;
 }) => {
   const router = useRouter();
+
+  const { createEvent } = useHistory();
 
   const user = useUserProfileStore((state) => state.user);
   if (user?.id !== undefined && userIds.includes(user.id)) {
@@ -54,6 +57,17 @@ export const UserCardEmptyContainer = ({
     }
     toast.success("Join request sent", {
       icon: "✅",
+    });
+
+    await createEvent({
+      eventText: `${user?.first_name} ${user?.last_name} requested to join ${trainingId ? "training" : "group"}`,
+      eventType: trainingId
+        ? "TRAINING_USER_JOIN_REQUEST"
+        : "GROUP_USER_JOIN_REQUEST",
+      groupId: groupId,
+      trainingId: trainingId,
+      fromId: user?.id,
+      toId: undefined,
     });
 
     router.refresh();

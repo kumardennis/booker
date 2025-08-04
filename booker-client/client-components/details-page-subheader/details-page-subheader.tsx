@@ -2,18 +2,21 @@ import { HistoryDrawer } from "@/client-components/history-drawer/history-drawer
 import "./details-page-subheader.styles.scss";
 import cn from "classnames";
 import Link from "next/link";
-import { HistoryEvent } from "@/app/types";
+import { HistoryEvent, Notice } from "@/app/types";
+import { NoticesDrawer } from "../notices-drawer/notices-drawer";
 
 type DetailsPageSubHeaderProps = {
   max_occupancy: number;
   users_length: number;
   history: HistoryEvent[];
+  notices?: Notice[];
 };
 
 export const DetailsPageSubHeader: React.FC<DetailsPageSubHeaderProps> = ({
   max_occupancy,
   users_length,
   history,
+  notices = [],
 }) => {
   return (
     <div className="details-page__subheader">
@@ -49,7 +52,7 @@ export const DetailsPageSubHeader: React.FC<DetailsPageSubHeaderProps> = ({
       <div className="details-page__history__notices">
         <HistoryDrawer history={history} />
 
-        <div className="notices">Notice Board</div>
+        <NoticesDrawer notices={notices} />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const club_id = searchParams.get("club_id");
     const day = searchParams.get("day");
     const group_id = searchParams.get("group_id");
+    const user_id = searchParams.get("user_id");
 
     const headersList = await headers();
     const auth = headersList.get("Authorization");
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest) {
         ...(club_id && { club_id }),
         ...(day && { day }),
         ...(group_id && { group_id }),
+        ...(user_id && { user_id }),
     };
 
     const response = await fetch(

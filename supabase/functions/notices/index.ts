@@ -5,14 +5,14 @@ import {
 } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
-import { handler as get_history } from "./get-history/handler.ts";
-import { handler as create_history } from "./create-history/handler.ts";
+import { handler as get_notices } from "./get-notices/handler.ts";
+import { handler as create_notice } from "./create-notice/handler.ts";
 
 console.log("Setting up localdev");
 
 const handlers = {
-  "get-history": get_history,
-  "create-history": create_history,
+  "get-notices": get_notices,
+  "create-notice": create_notice,
 } as unknown as Record<string, Handler>;
 
 function localdevHandler(req: Request, connInfo: ConnInfo) {

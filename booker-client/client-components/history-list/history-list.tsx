@@ -16,7 +16,7 @@ export const HistoryList = ({
   return history?.map((event) => (
     <div key={event.id} className="history__event">
       <div className="history__event__date">
-        {format(parseISO(event.created_at.toString()), "do MMMM")}
+        {format(parseISO(event.created_at.toString()), "do MMMM HH:mm")}
       </div>
       <div className="history__event__day">
         {format(parseISO(event.created_at.toString()), "EEEE")} :{" "}

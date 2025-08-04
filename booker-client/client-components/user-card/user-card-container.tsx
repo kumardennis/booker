@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 export const UserCardContainer = (props: {
   user: User;
   CTASlot: ReactNode;
+  isNotActive?: boolean;
   isRequest?: boolean;
   extraInfoSlot?: ReactNode | string;
 }) => {

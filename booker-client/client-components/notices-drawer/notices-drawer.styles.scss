@@ -1,0 +1,13 @@
+.history-drawer__content {
+  background-color: var(--color-light);
+  padding: 2rem;
+
+  .history-drawer__content__header {
+    padding: 0;
+
+    h2 {
+      font-size: var(--font-size-l);
+      padding-bottom: 2rem;
+    }
+  }
+}

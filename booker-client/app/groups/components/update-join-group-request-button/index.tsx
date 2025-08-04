@@ -7,20 +7,27 @@ import {
   rejectJoinGroupRequest,
 } from "../../group/actions";
 import { useRouter } from "next/navigation";
+import { useHistory } from "@/app/hooks/useHistory";
+import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 
 type LeaveGroupButtonProps = {
-  student_id: number | undefined;
+  studentId: number | undefined;
+  studentName: string | undefined;
   groupId: number | number;
 };
 
 export const UpdateJoinGroupRequestButton = ({
-  student_id,
+  studentId,
+  studentName,
   groupId,
 }: LeaveGroupButtonProps) => {
   const router = useRouter();
 
+  const { createEvent } = useHistory();
+  const user = useUserProfileStore((state) => state.user);
+
   const acceptRequest = async () => {
-    const data = await acceptJoinGroupRequest(student_id, groupId);
+    const data = await acceptJoinGroupRequest(studentId, groupId);
     if (data.error) {
       toast.error(data.error, {
         icon: "❌",
@@ -32,12 +39,20 @@ export const UpdateJoinGroupRequestButton = ({
         icon: "✅",
       });
 
+      await createEvent({
+        eventType: "GROUP_USER_JOIN",
+        groupId: groupId,
+        eventText: `Accepted join group request for ${studentName}`,
+        fromId: user?.id,
+        toId: studentId,
+      });
+
       router.refresh();
     }
   };
 
   const rejectRequest = async () => {
-    const data = await rejectJoinGroupRequest(student_id, groupId);
+    const data = await rejectJoinGroupRequest(studentId, groupId);
     if (data.error) {
       toast.error(data.error, {
         icon: "❌",

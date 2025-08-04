@@ -6,6 +6,7 @@ import {
   EventTypePermission,
   GroupEventType,
   HistoryEvent,
+  Notice,
 } from "@/app/types";
 import { UserCard } from "@/client-components/user-card/user-card";
 import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
@@ -21,6 +22,8 @@ import { DeleteJoinGroupRequestButton } from "../components/delete-join-group-re
 import { UpdateJoinGroupRequestButton } from "../components/update-join-group-request-button";
 import { getHistory } from "@/app/history/actions";
 import { getPermissions } from "@/app/clearance/utils/helpers";
+import { historyService } from "@/services/history-service";
+import { notificationService } from "@/services/notification-service";
 
 export default async function GroupPage({
   searchParams,
@@ -39,19 +42,22 @@ export default async function GroupPage({
 
   const queryString = apiQueryParams.toString();
 
-  const [clearanceData, groupsData, historyData] = await Promise.all([
-    getClearanceForGroup({
-      group_id: groupId,
-      event_types: Object.keys(GroupEventType) as GroupEventType[],
-      user_uuid,
-    }),
-    getClubGroups(queryString),
-    getHistory(Number(groupId)),
-  ]);
+  const [clearanceData, groupsData, historyData, noticesData] =
+    await Promise.all([
+      getClearanceForGroup({
+        group_id: groupId,
+        event_types: Object.keys(GroupEventType) as GroupEventType[],
+        user_uuid,
+      }),
+      getClubGroups(queryString),
+      historyService.getHistoryEvents({ group_id: Number(groupId) }),
+      notificationService.getNotices({ group_id: Number(groupId) }),
+    ]);
 
   const groups: ClubGroup[] = groupsData.data;
   const group: ClubGroup | undefined = groups[0];
-  const history: HistoryEvent[] = historyData.data;
+  const history: HistoryEvent[] = historyData;
+  const notices: Notice[] = noticesData;
 
   const canUserGenerateTraining = getPermissions(
     clearanceData.eventsPermissions,
@@ -110,6 +116,7 @@ export default async function GroupPage({
           group?.users?.filter((user) => user.is_active).length ?? 0
         }
         history={history}
+        notices={notices}
       />
 
       <div className="group-details__requests">
@@ -132,15 +139,18 @@ export default async function GroupPage({
               )}`}
               CTASlot={
                 <>
-                  {clearanceData.isRegularUser && canUserDeleteJoinRequest && (
-                    <DeleteJoinGroupRequestButton
-                      user_uuid={user_uuid}
-                      groupId={group.id}
-                    />
-                  )}
+                  {clearanceData.isRegularUser &&
+                    request.user?.userId === user_uuid &&
+                    canUserDeleteJoinRequest && (
+                      <DeleteJoinGroupRequestButton
+                        user_uuid={user_uuid}
+                        groupId={group.id}
+                      />
+                    )}
                   {!clearanceData.isRegularUser && canUserUpdateJoinRequest && (
                     <UpdateJoinGroupRequestButton
-                      student_id={request.user.id}
+                      studentId={request.user.id}
+                      studentName={`${request.user.first_name} ${request.user.last_name}`}
                       groupId={group.id}
                     />
                   )}
@@ -154,6 +164,7 @@ export default async function GroupPage({
         {group.users?.map((user) => (
           <UserCardContainer
             user={user.user}
+            isNotActive={!user.is_active}
             CTASlot={
               user.is_active ? (
                 updateLeaveClearance?.forPeople.self && (
