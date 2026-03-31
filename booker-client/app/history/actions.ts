@@ -3,7 +3,7 @@ export async function getHistory(
     training_id?: number,
 ) {
     const response = await fetch(
-        `http://localhost:3000/history/api/get-history`,
+        `history/api/get-history`,
         {
             method: "POST",
             headers: {

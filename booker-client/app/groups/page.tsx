@@ -21,9 +21,7 @@ export default async function GroupsPage({
   const clubId = normalizeSearchParam(resolvedSearchParams.club_id);
   const groupId = normalizeSearchParam(resolvedSearchParams.group_id);
 
-  const clubsResponse = await fetch(
-    "http://localhost:3000/clubs/api/get-clubs",
-  );
+  const clubsResponse = await fetch(`/clubs/api/get-clubs`);
   const clubsData = await clubsResponse.json();
   const clubs: Club[] = clubsData.data ?? [];
 
@@ -36,9 +34,7 @@ export default async function GroupsPage({
 
   const queryString = apiQueryParams.toString();
 
-  const response = await fetch(
-    `http://localhost:3000/groups/api/get-club-groups?${queryString}`,
-  );
+  const response = await fetch(` /groups/api/get-club-groups?${queryString}`);
   const data = await response.json();
 
   const groups: ClubGroup[] = data.data ?? [];
