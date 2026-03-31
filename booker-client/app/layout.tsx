@@ -4,12 +4,10 @@ import { karla } from "./fonts";
 import Navbar from "@/client-components/navbar/navbar";
 import { Toaster } from "react-hot-toast";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(defaultUrl ?? "http://localhost:3000"),
   title: "Next.js and Supabase Starter Kit",
   description: "The fastest way to build apps with Next.js and Supabase",
 };

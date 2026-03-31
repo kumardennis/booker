@@ -16,7 +16,7 @@ export async function leaveMyGroup(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        "http://localhost:3000/groups/api/update-club-groups-user",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/update-club-groups-user`,
         {
             method: "PUT",
             headers: {
@@ -51,7 +51,7 @@ export async function deleteJoinGroupRequest(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        "http://localhost:3000/groups/api/join-group-request",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/join-group-request`,
         {
             method: "DELETE",
             headers: {
@@ -79,7 +79,7 @@ export async function acceptJoinGroupRequest(
     }
 
     const response = await fetch(
-        "http://localhost:3000/groups/api/join-group-request",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/join-group-request`,
         {
             method: "PUT",
             headers: {
@@ -108,7 +108,7 @@ export async function rejectJoinGroupRequest(
     }
 
     const response = await fetch(
-        "http://localhost:3000/groups/api/join-group-request",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/join-group-request`,
         {
             method: "PUT",
             headers: {
@@ -132,7 +132,7 @@ export async function getClubGroups(
     queryString: string = "",
 ) {
     const response = await fetch(
-        `http://localhost:3000/groups/api/get-club-groups?${queryString}`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/get-club-groups?${queryString}`,
     );
     const data = await response.json();
     if (data.error) {

@@ -32,7 +32,7 @@ export default async function GroupsByDayPage({
   const queryString = apiQueryParams.toString();
 
   const response = await fetch(
-    `http://localhost:3000/groups/api/get-club-groups?${queryString}`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/get-club-groups?${queryString}`,
   );
 
   const data = await response.json();

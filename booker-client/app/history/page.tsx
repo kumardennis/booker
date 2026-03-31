@@ -13,7 +13,7 @@ export default async function HistoryPage({
   const group_id = resolvedSearchParams.group_id;
 
   const response = await fetch(
-    `http://localhost:3000/history/api/get-history`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/history/api/get-history`,
     {
       method: "POST",
       headers: {

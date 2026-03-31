@@ -5,11 +5,11 @@ export class NotificationService {
     notifications: Notification[] = [];
     createdNotifications: CreateNotificationType[] = [];
     private getApiUrl =
-        "http://localhost:3000/notifications/api/get-notifications";
+        `${process.env.NEXT_PUBLIC_SITE_URL}/notifications/api/get-notifications`;
     private createApiUrl =
-        "http://localhost:3000/notifications/api/create-notification";
+        `${process.env.NEXT_PUBLIC_SITE_URL}/notifications/api/create-notification`;
     private sendApiUrl =
-        "http://localhost:3000/notifications/api/send-notifications";
+        `${process.env.NEXT_PUBLIC_SITE_URL}/notifications/api/send-notifications`;
 
     public static getInstance(): NotificationService {
         if (!NotificationService.instance) {

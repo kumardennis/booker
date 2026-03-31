@@ -45,7 +45,7 @@ export const GenerateTrainingsCTA = ({
     try {
       setIsSubmitting(true);
       const response = await fetch(
-        "http://localhost:3000/trainings/api/create-group-trainings",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/create-group-trainings`,
         {
           method: "POST",
           headers: {

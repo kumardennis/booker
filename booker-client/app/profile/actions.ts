@@ -21,7 +21,7 @@ export const getProfilePageData = async (): Promise<{
 
     const profile = await getUserProfile(user_uuid);
 
-    let clubUrl = `http://localhost:3000/clubs/api/get-clubs`;
+    let clubUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/clubs/api/get-clubs`;
     if (profile?.club_id) {
         clubUrl += `?${new URLSearchParams({
             club_id: String(profile.club_id),
