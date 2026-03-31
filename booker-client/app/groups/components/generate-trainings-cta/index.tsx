@@ -44,17 +44,20 @@ export const GenerateTrainingsCTA = ({
 
     try {
       setIsSubmitting(true);
-      const response = await fetch("/trainings/api/create-group-trainings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:3000/trainings/api/create-group-trainings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            group_id: String(groupId),
+            from_date: fromDate,
+            till_date: tillDate,
+          }),
         },
-        body: JSON.stringify({
-          group_id: String(groupId),
-          from_date: fromDate,
-          till_date: tillDate,
-        }),
-      });
+      );
 
       const data = await response.json();
 

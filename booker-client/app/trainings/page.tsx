@@ -47,7 +47,7 @@ export default async function TrainingsPage({
       month,
       year,
     }),
-    fetch("clubs/api/get-clubs"),
+    fetch("http://localhost:3000/clubs/api/get-clubs"),
   ]);
 
   const dataJSON = await responseClubs.json();

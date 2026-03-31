@@ -12,17 +12,20 @@ export default async function HistoryPage({
   const training_id = resolvedSearchParams.training_id;
   const group_id = resolvedSearchParams.group_id;
 
-  const response = await fetch(`history/api/get-history`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `http://localhost:3000/history/api/get-history`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...(training_id && { training_id }),
+        ...(group_id && { group_id }),
+      }),
+      cache: "no-store",
     },
-    body: JSON.stringify({
-      ...(training_id && { training_id }),
-      ...(group_id && { group_id }),
-    }),
-    cache: "no-store",
-  });
+  );
 
   const data = await response.json();
 

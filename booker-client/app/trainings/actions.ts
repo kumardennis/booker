@@ -18,7 +18,7 @@ export const getGroupTrainings = async ({
     user_id?: string;
 }) => {
     const response = await fetch(
-        `trainings/api/get-group-trainings`,
+        `http://localhost:3000/trainings/api/get-group-trainings`,
         {
             method: "POST",
             headers: {

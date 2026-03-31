@@ -4,9 +4,12 @@ export class NotificationService {
     public static instance: NotificationService;
     notifications: Notification[] = [];
     createdNotifications: CreateNotificationType[] = [];
-    private getApiUrl = "notifications/api/get-notifications";
-    private createApiUrl = "notifications/api/create-notification";
-    private sendApiUrl = "notifications/api/send-notifications";
+    private getApiUrl =
+        "http://localhost:3000/notifications/api/get-notifications";
+    private createApiUrl =
+        "http://localhost:3000/notifications/api/create-notification";
+    private sendApiUrl =
+        "http://localhost:3000/notifications/api/send-notifications";
 
     public static getInstance(): NotificationService {
         if (!NotificationService.instance) {

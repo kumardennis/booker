@@ -4,7 +4,7 @@ import "./clubs.styles.scss";
 import Link from "next/link";
 
 export default async function ClubsPage() {
-  const response = await fetch(`/clubs/api/get-clubs`);
+  const response = await fetch("http://localhost:3000/clubs/api/get-clubs");
   const dataJSON = await response.json();
 
   const clubs: Club[] = dataJSON.data;
