@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/clubs/get-clubs",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/clubs/get-clubs`,
         {
             method: "POST",
             headers: {

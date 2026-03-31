@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     };
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/groups/get-club-groups",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/groups/get-club-groups`,
         {
             method: "POST",
             headers: {

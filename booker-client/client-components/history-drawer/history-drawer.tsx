@@ -2,8 +2,10 @@
 
 import { HistoryEvent } from "@/app/types";
 import { historyService } from "@/services/history-service";
+import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
 import {
   Drawer,
   DrawerClose,
@@ -18,6 +20,7 @@ import { HistoryList } from "../history-list/history-list";
 import "./history-drawer.styles.scss";
 
 export const HistoryDrawer = () => {
+  const user = useUserProfileStore((state) => state.user);
   const searchParams = useSearchParams();
   const [history, setHistory] = useState<HistoryEvent[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +59,14 @@ export const HistoryDrawer = () => {
   }, [groupId, isLoading, trainingId]);
 
   const handleOpenChange = async (open: boolean) => {
+    if (open && !user?.id) {
+      toast.error("Please sign in to view history", {
+        icon: "🔐",
+      });
+      setIsOpen(false);
+      return;
+    }
+
     setIsOpen(open);
 
     if (open) {

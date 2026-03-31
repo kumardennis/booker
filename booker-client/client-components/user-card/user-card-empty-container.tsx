@@ -46,12 +46,19 @@ export const UserCardEmptyContainer = ({
   }
 
   const urlToCall = trainingId
-    ? "http://localhost:3000/trainings/api/join-training-request"
+    ? "/trainings/api/join-training-request"
     : groupId
-      ? "http://localhost:3000/groups/api/join-group-request"
+      ? "/groups/api/join-group-request"
       : null;
 
   const requestToJoin = async () => {
+    if (!user?.id) {
+      toast.error("Please sign in to send a join request", {
+        icon: "🔐",
+      });
+      return;
+    }
+
     if (!urlToCall) {
       throw new Error("No url to call");
     }

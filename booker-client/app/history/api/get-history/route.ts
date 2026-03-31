@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     body.group_id = group_id;
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/history/get-history",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/history/get-history`,
         {
             method: "POST",
             headers: {

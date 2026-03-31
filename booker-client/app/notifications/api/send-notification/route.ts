@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
                 type: "OAuth2",
                 user: process.env.NEXT_PUBLIC_EMAIL_USER,
                 clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-                clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 refreshToken: process.env.NEXT_PUBLIC_GOOGLE_REFRESH_TOKEN,
             },
         });

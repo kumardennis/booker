@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(
     "Authorization",
-    `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_LOCAL!}`,
+    `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
   );
   requestHeaders.set("x-current-path", request.nextUrl.pathname);
 

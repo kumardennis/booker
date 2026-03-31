@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     body.till_date = till_date;
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/trainings/upsert-group-trainings",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/trainings/upsert-group-trainings`,
         {
             method: "POST",
             headers: {

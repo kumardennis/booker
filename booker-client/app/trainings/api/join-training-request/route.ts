@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     };
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/trainings/create-join-training-request",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/trainings/create-join-training-request`,
         {
             method: "POST",
             headers: {
@@ -45,7 +45,7 @@ export async function DELETE(request: NextRequest) {
     };
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/groups/delete-join-training-request",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/groups/delete-join-training-request`,
         {
             method: "POST",
             headers: {
@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest) {
     };
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/trainings/update-join-training-request",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/trainings/update-join-training-request`,
         {
             method: "POST",
             headers: {

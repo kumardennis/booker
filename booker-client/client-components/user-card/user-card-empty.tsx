@@ -9,7 +9,7 @@ export const UserCardEmpty = ({
   requestToJoin: () => Promise<void>;
 }) => {
   const joinRequest = async () => {
-    requestToJoin();
+    await requestToJoin();
   };
   return (
     <div className={cn("user-card__item empty")}>

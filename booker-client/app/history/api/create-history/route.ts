@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-        "http://127.0.0.1:54321/functions/v1/history/create-history",
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/history/create-history`,
         {
             method: "POST",
             headers: {
