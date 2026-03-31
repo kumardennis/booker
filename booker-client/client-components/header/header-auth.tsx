@@ -5,17 +5,28 @@ import { createClient } from "@/utils/supabase/client";
 import { jetBrainsMono } from "@/app/fonts";
 
 import "./header-auth.styles.scss";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/app/types";
 import { SettingsIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 import { signOutAction } from "@/app/actions";
 
 export const AuthHeader = () => {
   const supabase = createClient();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const [clubName, setClubName] = useState<string | null>(null);
+  const clubNameCacheRef = useRef<Record<string, string | null>>({});
+
+  const clubId = searchParams.get("club_id");
+
+  const isPublicBrowseRoute =
+    pathname.startsWith("/clubs") ||
+    pathname.startsWith("/groups") ||
+    pathname.startsWith("/trainers") ||
+    pathname.startsWith("/trainings");
 
   const user = useUserProfileStore((state) => state.user);
   const userError = useUserProfileStore((state) => state.userError);
@@ -24,6 +35,18 @@ export const AuthHeader = () => {
 
   const getUser = async () => {
     const { data: authData } = await supabase.auth.getUser();
+
+    if (!authData.user) {
+      if (
+        pathname !== "/sign-in" &&
+        pathname !== "/error" &&
+        !isPublicBrowseRoute
+      ) {
+        router.push("/sign-in");
+      }
+
+      return;
+    }
 
     const { data, error }: { data: User | null; error: any } = await supabase
       .from("users")
@@ -35,11 +58,31 @@ export const AuthHeader = () => {
       setUserError(error);
     }
 
-    if (!authData.user && pathname !== "/sign-in" && pathname !== "/error") {
-      router.push("/sign-in");
+    data && setUser(data);
+  };
+
+  const getClubName = async (clubId: string) => {
+    if (clubNameCacheRef.current[clubId] !== undefined) {
+      setClubName(clubNameCacheRef.current[clubId]);
+      return;
     }
 
-    data && setUser(data);
+    try {
+      const response = await fetch("/clubs/api/get-clubs");
+      const dataJSON = await response.json();
+      const clubs = dataJSON.data ?? [];
+
+      const selectedClub = clubs.find(
+        (club: { id: number; name: string }) => String(club.id) === clubId,
+      );
+
+      const nextClubName = selectedClub?.name ?? null;
+      clubNameCacheRef.current[clubId] = nextClubName;
+      setClubName(nextClubName);
+    } catch {
+      clubNameCacheRef.current[clubId] = null;
+      setClubName(null);
+    }
   };
 
   const signOut = async (e: React.MouseEvent) => {
@@ -76,7 +119,7 @@ export const AuthHeader = () => {
           console.log("User signed out - clearing state");
           setUser(null);
         }
-      }
+      },
     );
 
     return () => {
@@ -84,14 +127,30 @@ export const AuthHeader = () => {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    if (!clubId) {
+      setClubName(null);
+      return;
+    }
+
+    getClubName(clubId);
+  }, [clubId]);
+
+  const headerCenterText = user?.first_name
+    ? `Hi, ${user.first_name}`
+    : (clubName ?? "Welcome!");
+
   return (
     <div className="header-auth flex items-center w-full justify-between">
       <span className={`${jetBrainsMono.className}`}>BOOKER</span>
       {!userError && !pathname.includes("sign-in") && (
-        <span>Hi, {user?.first_name}!</span>
+        <span>{headerCenterText}</span>
       )}
       <div className="right-side-header-content flex items-center gap-4">
-        <Link href={"/profile"} className="settings-icon-wrapper">
+        <Link
+          href={!user ? "/sign-in" : "/profile"}
+          className="settings-icon-wrapper"
+        >
           <SettingsIcon />
         </Link>
         <Link

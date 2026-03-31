@@ -117,6 +117,18 @@ export type Notice = {
     user?: User;
 };
 
+export type Notification = {
+    id: number;
+    created_at: Date;
+    message: string;
+    user_id: number;
+    is_read: boolean;
+};
+
+export type CreateNotificationType = Partial<
+    Omit<Notification, "id" | "created_at">
+>;
+
 export enum GroupEventType {
     GROUP_USER_JOIN_REQUEST = "GROUP_USER_JOIN_REQUEST",
     GROUP_USER_JOIN_REQUEST_DELETE = "GROUP_USER_JOIN_REQUEST_DELETE",

@@ -5,10 +5,15 @@
 @layer base {
   :root {
     --color-dark: #1E1E1E;
+    --color-dark-rgb: 30, 30, 30;
     --color-gray: #D2D2D2;
+    --color-gray-rgb: 210, 210, 210;
     --color-light: #EDEDED;
+    --color-light-rgb: 237, 237, 237;
     --color-gray-dark: #939393;
+    --color-gray-dark-rgb: 147, 147, 147;
     --color-success: #0C9600;
+    --color-success-rgb: 12, 150, 0;
     --color-warning: #E5CB00;
     --color-danger: #A00202;
 

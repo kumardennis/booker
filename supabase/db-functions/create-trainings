@@ -1,0 +1,62 @@
+create or replace function create_trainings_batch(
+  _trainings jsonb
+)
+returns void
+language plpgsql
+as $$
+declare
+  training jsonb;
+  inserted_training_id bigint;
+begin
+  if _trainings is null
+    or jsonb_typeof(_trainings) <> 'array'
+    or jsonb_array_length(_trainings) = 0 then
+    return;
+  end if;
+
+  for training in select jsonb_array_elements(_trainings) loop
+    insert into group_trainings (
+      group_id,
+      club_id,
+      start_timestamp,
+      end_timestamp,
+      max_occupancy,
+      level
+    )
+    values (
+      (training->>'group_id')::int,
+      (training->>'club_id')::int,
+      (training->>'start_timestamp')::timestamp,
+      (training->>'end_timestamp')::timestamp,
+      (training->>'max_occupancy')::int,
+      (training->>'level')::int
+    )
+    returning id into inserted_training_id;
+
+    insert into users_trainings (user_id, training_id)
+    select ug.user_id, inserted_training_id
+    from users_groups ug
+    where ug.club_group_id = (training->>'group_id')::int
+      and ug.is_active = true
+      and not exists (
+        select 1
+        from users_trainings ut
+        where ut.user_id = ug.user_id
+          and ut.training_id = inserted_training_id
+      );
+
+    insert into trainers_trainings (trainer_id, training_id)
+    select tg.trainer_id, inserted_training_id
+    from trainers_groups tg
+    where tg.club_group_id = (training->>'group_id')::int
+      and not exists (
+        select 1
+        from trainers_trainings tt
+        where tt.trainer_id = tg.trainer_id
+          and tt.training_id = inserted_training_id
+      );
+  end loop;
+exception when others then
+  raise exception 'Error inserting trainings: %', sqlerrm;
+end;
+$$;

@@ -1,84 +1,97 @@
-import { getUserProfile } from "@/lib/user-cache";
 import "./profile.styles.scss";
-import { createClient } from "@/utils/supabase/server";
 import { getProfilePageData } from "./actions";
 import { format, parseISO } from "date-fns";
 
 export default async function ProfilePage() {
-  const { profile, user_uuid, club, groups, trainings } =
-    await getProfilePageData();
+  const { profile, club, groups = [], trainings = [] } = await getProfilePageData();
 
-  console.log("Profile Page Data:", {
-    profile,
-    user_uuid,
-    club,
-    groups,
-    trainings,
-  });
+  const roleBadges: string[] = [];
+  if (profile?.is_club_admin) roleBadges.push("Club admin");
+  if (profile?.is_trainer) roleBadges.push("Trainer");
+  if (roleBadges.length === 0) roleBadges.push("Student");
+
+  const totalGroups = groups.length;
+  const totalTrainings = trainings.length;
+
+  const displayName = `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`.trim();
   return (
     <div className="profile">
       <div className="profile__content">
-        <div className="profile__content__header">
+        <section className="profile__hero">
           <img
             src={profile?.profile_image || "/default-profile.png"}
-            alt="Profile Picture"
-            className="profile__content__header__picture"
+            alt="Profile picture"
+            className="profile__hero__picture"
           />
-          <span>
-            {profile?.first_name} {profile?.last_name}
-          </span>
-        </div>
-        <div className="profile__content__details">
-          {profile?.is_club_admin && (
-            <div className="profile__content__details__item">Club admin</div>
-          )}
 
-          {profile?.is_trainer && (
-            <div className="profile__content__details__item">Trainer</div>
-          )}
+          <div className="profile__hero__copy">
+            <p className="profile__eyebrow">Profile overview</p>
+            <h1>{displayName || "Unnamed user"}</h1>
+            <p className="profile__club-name">{club?.name || "No club assigned"}</p>
 
-          {!profile?.is_club_admin && !profile?.is_trainer && (
-            <div className="profile__content__details__item">Student</div>
-          )}
-
-          <div className="profile__content__details__item club-name">
-            {club?.name}
+            <div className="profile__role-badges">
+              {roleBadges.map((badge) => (
+                <span key={badge} className="profile__badge">
+                  {badge}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="profile__content__details__item groups">
-            <h2>Groups</h2>
+          <div className="profile__stats">
+            <div className="profile__stat-card">
+              <span className="profile__stat-label">Groups</span>
+              <span className="profile__stat-value">{totalGroups}</span>
+            </div>
+            <div className="profile__stat-card">
+              <span className="profile__stat-label">Trainings</span>
+              <span className="profile__stat-value">{totalTrainings}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="profile__details-grid">
+          <article className="profile__panel">
+            <div className="profile__panel__header">
+              <h2>Groups</h2>
+              <span className="profile__panel__count">{totalGroups}</span>
+            </div>
+
+            {totalGroups === 0 && <p className="profile__empty">No groups yet.</p>}
+
             {groups.map((group) => (
-              <div
-                key={group.id}
-                className="profile__content__details__item__content"
-              >
-                {group.day.slice(0, 3)} | {group.start_time} - {group.end_time}
+              <div key={group.id} className="profile__row">
+                <span className="profile__row__left">{group.day.slice(0, 3)}</span>
+                <span className="profile__row__right">
+                  {group.start_time} - {group.end_time}
+                </span>
               </div>
             ))}
-          </div>
+          </article>
 
-          <div className="profile__content__details__item trainings">
-            <h2>Trainings</h2>
+          <article className="profile__panel">
+            <div className="profile__panel__header">
+              <h2>Trainings</h2>
+              <span className="profile__panel__count">{totalTrainings}</span>
+            </div>
 
-            {trainings?.map((training) => (
-              <div
-                key={training.id}
-                className="profile__content__details__item__content"
-              >
-                {training.club_groups.day.slice(0, 3)} |{" "}
-                {format(
-                  parseISO(training.start_timestamp.toString()),
-                  "do MMM"
-                )}{" "}
-                -{" "}
-                {format(
-                  parseISO(training.start_timestamp.toString()),
-                  "do MMM"
-                )}
+            {totalTrainings === 0 && (
+              <p className="profile__empty">No trainings yet.</p>
+            )}
+
+            {trainings.map((training) => (
+              <div key={training.id} className="profile__row">
+                <span className="profile__row__left">
+                  {training.club_groups.day.slice(0, 3)}
+                </span>
+                <span className="profile__row__right">
+                  {format(parseISO(training.start_timestamp.toString()), "do MMM")} |{" "}
+                  {training.club_groups.start_time} - {training.club_groups.end_time}
+                </span>
               </div>
             ))}
-          </div>
-        </div>
+          </article>
+        </section>
       </div>
     </div>
   );

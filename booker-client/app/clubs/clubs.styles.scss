@@ -1,47 +1,211 @@
-.club-thumbnails {
+.clubs-page {
+  padding: 0.75rem 0;
+
+  .clubs-hero {
+    border-radius: 1.2rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border: 1px solid rgba(var(--color-dark-rgb), 0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(var(--color-light-rgb), 0.82),
+      rgba(var(--color-light-rgb), 0.72)
+    );
+    box-shadow: 0 14px 34px rgba(var(--color-dark-rgb), 0.08);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    .clubs-eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(var(--color-dark-rgb), 0.44);
+      margin-bottom: 0.55rem;
+    }
+
+    .clubs-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--color-dark);
+      line-height: 1;
+      margin-bottom: 0.65rem;
+    }
+
+    .clubs-subtitle {
+      color: rgba(var(--color-dark-rgb), 0.66);
+      max-width: 44rem;
+      margin-bottom: 0;
+      font-size: clamp(0.94rem, 1.2vw, 1.03rem);
+    }
+
+    .clubs-count {
+      min-width: 120px;
+      border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+      border-radius: 0.9rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(var(--color-light-rgb), 0.78);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+
+      .clubs-count-value {
+        color: var(--color-dark);
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      .clubs-count-label {
+        margin-top: 0.25rem;
+        color: rgba(var(--color-dark-rgb), 0.58);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+    }
+  }
+
+  .club-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .club-link {
+    max-width: 460px;
+    text-decoration: none;
+  }
+
+  .club-thumbnail {
+    background: rgba(var(--color-light-rgb), 0.84);
+    border-radius: 1.1rem;
+    overflow: hidden;
+    border: 1px solid rgba(var(--color-dark-rgb), 0.08);
+    box-shadow: 0 16px 32px rgba(var(--color-dark-rgb), 0.09);
+    transform: translateY(0);
+    transition:
+      transform 0.24s ease,
+      box-shadow 0.24s ease,
+      border-color 0.24s ease;
+    // width: 45%;
+    height: 300px;
+
+    .club-media {
+      height: 160px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1);
+        transition: transform 0.32s ease;
+        filter: grayscale(0.7);
+      }
+    }
+
+    .club-thumbnail-info {
+      padding: 0.95rem 1rem 1rem;
+
+      .club-label {
+        text-transform: uppercase;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        color: rgba(var(--color-dark-rgb), 0.5);
+        margin-bottom: 0.45rem;
+      }
+
+      .club-name {
+        color: var(--color-dark);
+        font-size: clamp(1.08rem, 2vw, 1.32rem);
+        line-height: 1.18;
+        margin-bottom: 0.8rem;
+        min-height: 2.45rem;
+      }
+
+      .club-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+
+        .club-cta {
+          color: var(--color-dark);
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+        }
+
+        .club-arrow {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 999px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(var(--color-dark-rgb), 0.14);
+          color: rgba(var(--color-dark-rgb), 0.75);
+          font-size: 1rem;
+          line-height: 1;
+          transition:
+            transform 0.2s ease,
+            background-color 0.2s ease;
+        }
+      }
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgba(var(--color-dark-rgb), 0.16);
+      box-shadow: 0 20px 38px rgba(var(--color-dark-rgb), 0.14);
+
+      .club-media img {
+        transform: scale(0.95);
+        filter: grayscale(0);
+      }
+
+      .club-arrow {
+        transform: translate(2px, -2px);
+        background: rgba(var(--color-dark-rgb), 0.05);
+      }
+    }
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    border: 1px dashed rgba(var(--color-dark-rgb), 0.18);
+    border-radius: 1rem;
+    padding: 2rem 1rem;
+    color: var(--color-dark);
+    background: rgba(var(--color-light-rgb), 0.72);
+
+    .empty-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .empty-description {
+      color: rgba(var(--color-dark-rgb), 0.62);
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .clubs-page {
+    .clubs-hero {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .clubs-count {
+        align-items: flex-start;
+      }
+    }
 
     .club-thumbnail {
-        position: relative;
-        height: 13.375rem;
-        width: 19rem;
-        filter: saturate(0);
-        transition-duration: 0.2s;
-        cursor: pointer;
-        border-radius: 1rem;
-        box-shadow: 0 0 1rem 0.2rem rgba(0, 0, 0, 0.2);
-
-        & > img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: left;
-            filter: brightness(0.2);
-            transition-duration: 0.2s;
-            border-radius: 1rem;
-
-        }
-
-        & > .club-thumbnail-info {
-            position: absolute;
-            z-index: 10;
-            color: var(--color-light);
-            padding: 1rem;
-
-            .club-name {
-                font-size: var(--font-size-x-lg);
-            }
-        }
-
-        &:hover {
-            transform: scale(1.05);
-            filter: saturate(1);
-
-            & > img {
-                filter: brightness(0.5);
-            }
-        }
+      .club-media {
+        height: 150px;
+      }
     }
+  }
 }

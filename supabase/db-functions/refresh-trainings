@@ -1,0 +1,56 @@
+create or replace function refresh_trainings_with_users(
+  _group_id int,
+  _from_date timestamp,
+  _till_date timestamp
+)
+returns void
+language plpgsql
+as $$
+declare
+  _club_id int;
+  _start_time time;
+  _end_time time;
+  _max_occupancy int;
+  _level int;
+  _once_in_number_of_weeks int;
+  _current_date timestamp;
+  _start_timestamp timestamp;
+  _end_timestamp timestamp;
+  _new_training_id int;
+begin
+  -- Fetch group details
+  select club_id, start_time, end_time, max_occupancy, level, once_in_number_of_weeks
+  into _club_id, _start_time, _end_time, _max_occupancy, _level, _once_in_number_of_weeks
+  from club_groups
+  where id = _group_id;
+
+  -- Delete all future training rows for the group
+  delete from group_trainings
+  where group_id = _group_id
+    and start_timestamp >= _from_date;
+
+  -- Initialize the current date to the start date
+  _current_date := _from_date;
+
+  -- Loop through the date range and insert rows
+  while _current_date <= _till_date loop
+    -- Calculate the start and end timestamps for the training
+    _start_timestamp := _current_date + (_start_time)::interval;
+    _end_timestamp := _current_date + (_end_time)::interval;
+
+    -- Insert the training row and get its ID
+    insert into group_trainings (group_id, club_id, start_timestamp, end_timestamp, max_occupancy, level)
+    values (_group_id, _club_id, _start_timestamp, _end_timestamp, _max_occupancy, _level)
+    returning id into _new_training_id;
+
+    -- Assign users from `users_groups` to the new training row in `users_trainings`
+    insert into users_trainings (user_id, training_id, is_active)
+    select user_id, _new_training_id, true
+    from users_groups
+    where club_group_id = _group_id;
+
+    -- Increment the current date by the interval (in weeks)
+    _current_date := _current_date + (_once_in_number_of_weeks * 7) * interval '1 day';
+  end loop;
+end;
+$$;

@@ -20,20 +20,31 @@ export const handler = async (req: Request) => {
     const { data: existsData, error: existsError } = await supabase
       .from("join_training_requests")
       .select("*")
-      .match({
-        ...(user_id && { user_id }),
-        ...(training_id && { training_id: training_id }),
-      }).single();
+      .match({ user_id, training_id })
+      .maybeSingle();
 
-    if (existsData && !existsError) {
+    if (existsError) {
       return new Response(
         JSON.stringify({
           isRequestSuccessfull: false,
           data: null,
-          error: "Join group request already exists",
+          error: existsError,
         }),
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (existsData) {
+      return new Response(
+        JSON.stringify({
+          isRequestSuccessfull: false,
+          data: null,
+          error: "Join training request already exists",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         },
       );
     }

@@ -10,6 +10,8 @@ import { handler as update_training_user } from "./update-training-user/handler.
 import { handler as create_training_request } from "./create-join-training-request/handler.ts";
 import { handler as delete_training_request } from "./delete-join-training-request/handler.ts";
 import { handler as update_training_request } from "./update-join-training-request/handler.ts";
+import { handler as create_group_trainings } from "./create-group-trainings/handler.ts";
+import { handler as upsert_group_trainings } from "./upsert-group-trainings/handler.ts";
 
 console.log("Setting up localdev");
 
@@ -19,6 +21,8 @@ const handlers = {
   "create-join-training-request": create_training_request,
   "delete-join-training-request": delete_training_request,
   "update-join-training-request": update_training_request,
+  "create-group-trainings": create_group_trainings,
+  "upsert-group-trainings": upsert_group_trainings,
 } as unknown as Record<string, Handler>;
 
 function localdevHandler(req: Request, connInfo: ConnInfo) {

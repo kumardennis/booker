@@ -1,12 +1,35 @@
 import { EventType, HistoryEvent } from "@/app/types";
 
+const resolveRequestSuccess = (data: Record<string, unknown>) =>
+    Boolean(data.isRequestSuccessful ?? data.isRequestSuccessfull);
+
+const resolveErrorMessage = (
+    data: Record<string, unknown>,
+    fallback: string,
+) => {
+    const error = data.error;
+
+    if (typeof error === "string") {
+        return error;
+    }
+
+    if (error && typeof error === "object" && "message" in error) {
+        const message = error.message;
+
+        if (typeof message === "string") {
+            return message;
+        }
+    }
+
+    return fallback;
+};
+
 export class HistoryService {
     public static instance: HistoryService;
     historyEvents: HistoryEvent[] = [];
     createEvent: Partial<Omit<HistoryEvent, "id" | "created_at">> | null = null;
-    private getHistoryApiUrl = "http://localhost:3000/history/api/get-history";
-    private createHistoryApiUrl =
-        "http://localhost:3000/history/api/create-history";
+    private getHistoryApiUrl = "/history/api/get-history";
+    private createHistoryApiUrl = "/history/api/create-history";
 
     public static getInstance(): HistoryService {
         if (!HistoryService.instance) {
@@ -59,18 +82,20 @@ export class HistoryService {
 
             const data = await response.json();
 
-            const { isRequestSuccessfull, data: historyEvents } = data;
-            if (isRequestSuccessfull) {
-                this.historyEvents = historyEvents.map(
-                    (event: HistoryEvent) => {
-                        const { id, ...rest } = event;
-                        return rest;
-                    },
+            if (!response.ok || !resolveRequestSuccess(data)) {
+                throw new Error(
+                    resolveErrorMessage(
+                        data,
+                        "Could not create history event.",
+                    ),
                 );
             }
+
+            this.historyEvents = Array.isArray(data.data)
+                ? data.data as HistoryEvent[]
+                : [];
+
             return this.historyEvents;
-        } catch (err) {
-            console.log(err);
         } finally {
             this.createEvent = null;
         }
@@ -91,14 +116,16 @@ export class HistoryService {
         });
 
         const data = await response.json();
-        const { isRequestSuccessfull, data: historyEvents } = data;
-
-        if (isRequestSuccessfull) {
-            this.historyEvents = historyEvents.map((event: HistoryEvent) => {
-                const { id, ...rest } = event;
-                return rest;
-            });
+        if (!response.ok || !resolveRequestSuccess(data)) {
+            throw new Error(
+                resolveErrorMessage(data, "Could not load history."),
+            );
         }
+
+        this.historyEvents = Array.isArray(data.data)
+            ? data.data as HistoryEvent[]
+            : [];
+
         return this.historyEvents;
     }
 

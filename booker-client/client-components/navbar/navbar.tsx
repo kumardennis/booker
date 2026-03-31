@@ -1,11 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./navbar.styles.scss";
 import cn from "classnames";
 
 export default function Navbar() {
   const pathname = usePathname();
+
+  const navItems = [
+    { href: "/clubs", label: "Clubs", match: "clubs" },
+    { href: "/groups", label: "Groups", match: "groups" },
+    // { href: "/trainers", label: "Trainers", match: "trainers" },
+    { href: "/trainings", label: "Trainings", match: "trainings" },
+  ];
 
   const isAuthPage =
     pathname.includes("sign-in") || pathname.includes("sign-up");
@@ -16,33 +24,21 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
+      <div className="navbar__label">Navigate</div>
       <ul>
-        <li
-          className={cn("navbar__item", { active: pathname.includes("clubs") })}
-        >
-          <a href="/clubs">Clubs</a>
-        </li>
-        <li
-          className={cn("navbar__item", {
-            active: pathname.includes("groups"),
-          })}
-        >
-          <a href="/groups">Groups</a>
-        </li>
-        <li
-          className={cn("navbar__item", {
-            active: pathname.includes("trainers"),
-          })}
-        >
-          <a href="/trainers">Trainers</a>
-        </li>
-        <li
-          className={cn("navbar__item", {
-            active: pathname.includes("trainings"),
-          })}
-        >
-          <a href="/trainings">Trainings</a>
-        </li>
+        {navItems.map((item) => (
+          <li
+            key={item.href}
+            className={cn("navbar__item", {
+              active: pathname.includes(item.match),
+            })}
+          >
+            <Link href={item.href} className="navbar__link">
+              <span className="navbar__dot" aria-hidden="true" />
+              <span>{item.label}</span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </nav>
   );

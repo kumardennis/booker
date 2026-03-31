@@ -11,7 +11,7 @@ export const confirmedRequiredParams = (listOfParams: string[]): boolean => {
 };
 
 export const errorResponseData: ResponseModel = {
-  isRequestSuccessful: false,
+  isRequestSuccessfull: false,
   data: null,
   error: "Some values were not correct or are missing...",
 };

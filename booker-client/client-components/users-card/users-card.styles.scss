@@ -51,6 +51,15 @@
         border-radius: 50%;
         margin-right: 0.5rem;
       }
+
+      .users-card__item__users__user__name {
+        transition: filter 0.2s ease;
+
+        &.is-blurred {
+          filter: blur(0.35rem);
+          user-select: none;
+        }
+      }
     }
   }
 

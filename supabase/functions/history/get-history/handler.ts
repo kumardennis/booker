@@ -18,7 +18,7 @@ export const handler = async (req: Request) => {
     }
 
     const { data: users, error } = await supabase
-      .from("notices")
+      .from("history_events")
       .select("*").match({
         ...(group_id && { group_id }),
         ...(training_id && { training_id }),

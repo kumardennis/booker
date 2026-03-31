@@ -25,35 +25,30 @@ export const TrainingsFilter = ({ clubs }: PropTypes) => {
   const currentPathname = usePathname();
   const searchParams = useSearchParams();
 
-  const clubId = searchParams.get("club_id") || "";
-  const day = searchParams.get("day") || "MONDAY";
-  const groupId = searchParams.get("group_id") || "";
-  const date = searchParams.get("date") || "";
+  const today = new Date();
+  const defaultDate = today.getDate();
+  const defaultMonth = today.getMonth() + 1;
+  const defaultYear = today.getFullYear();
+
+  const clubId = searchParams.get("club_id") ?? "";
+  const day = searchParams.get("day") ?? "MONDAY";
+  const groupId = searchParams.get("group_id") ?? "";
+  const date = searchParams.get("date");
+  const month = searchParams.get("month");
+  const year = searchParams.get("year");
+
+  const parsedDate = date ? Number(date) : defaultDate;
+  const parsedMonth = month ? Number(month) : defaultMonth;
+  const parsedYear = year ? Number(year) : defaultYear;
 
   const [urlState, setUrlState] = useState<urlStateType>({
-    day: day,
+    day,
     club_id: clubId,
     group_id: groupId,
-    date: 1,
-    month: 1,
-    year: 2022,
+    date: Number.isNaN(parsedDate) ? defaultDate : parsedDate,
+    month: Number.isNaN(parsedMonth) ? defaultMonth : parsedMonth,
+    year: Number.isNaN(parsedYear) ? defaultYear : parsedYear,
   });
-
-  useEffect(() => {
-    const today = new Date();
-    const todayDate = date ? Number(date) : today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const dayOfWeek = today.getDay();
-
-    setUrlState((prev) => ({
-      ...prev,
-      date: todayDate,
-      month: month,
-      year: year,
-      day: days[dayOfWeek],
-    }));
-  }, []);
 
   const handleChange =
     (field: "day" | "date" | "month" | "year" | "club_id") =>
@@ -69,7 +64,7 @@ export const TrainingsFilter = ({ clubs }: PropTypes) => {
             : getDateByDayOfWeek(
                 days.indexOf(newValue),
                 Number(urlState.month),
-                Number(urlState.year)
+                Number(urlState.year),
               ).getDate(),
         }));
         return;
@@ -78,7 +73,7 @@ export const TrainingsFilter = ({ clubs }: PropTypes) => {
       const dayIndex = new Date(
         field === "year" ? Number(newValue) : Number(urlState.year),
         field === "month" ? Number(newValue) : Number(urlState.month) - 1,
-        field === "date" ? Number(newValue) : Number(urlState.date)
+        field === "date" ? Number(newValue) : Number(urlState.date),
       ).getDay();
 
       setUrlState((prev) => ({
@@ -97,62 +92,97 @@ export const TrainingsFilter = ({ clubs }: PropTypes) => {
       }
     }
 
-    router?.push(`${currentPathname}?${params.toString()}`);
-  }, [urlState]);
+    router?.replace(`${currentPathname}?${params.toString()}`);
+  }, [currentPathname, router, urlState]);
 
   return (
     <div className="trainings-filter">
-      <select
-        value={urlState.club_id}
-        onChange={handleChange("club_id")}
-        className="form-select"
-      >
-        {clubs.map((club) => (
-          <option value={club.id}>{club.name}</option>
-        ))}
-      </select>
+      <p className="trainings-filter__label">Filter Sessions</p>
 
-      <select
-        value={urlState.day}
-        onChange={handleChange("day")}
-        className="form-select"
-      >
-        <option value={""}>Not selected</option>
-        {days.map((day) => (
-          <option value={day}>{day}</option>
-        ))}
-      </select>
+      <div className="trainings-filter__controls">
+        <label className="trainings-filter__field">
+          <span>Club</span>
+          <select
+            value={urlState.club_id}
+            onChange={handleChange("club_id")}
+            className="form-select"
+            aria-label="Select club"
+          >
+            <option value={""}>All clubs</option>
+            {clubs.map((club) => (
+              <option key={club.id} value={club.id}>
+                {club.name}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <select
-        value={urlState.date}
-        onChange={handleChange("date")}
-        className="form-select"
-      >
-        <option value={""}>Not selected</option>
-        {Array.from({ length: 31 }, (_, index) => (
-          <option value={index + 1}>{index + 1}</option>
-        ))}
-      </select>
+        <label className="trainings-filter__field">
+          <span>Day</span>
+          <select
+            value={urlState.day}
+            onChange={handleChange("day")}
+            className="form-select"
+            aria-label="Select day"
+          >
+            <option value={""}>Not selected</option>
+            {days.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <select
-        value={urlState.month}
-        onChange={handleChange("month")}
-        className="form-select"
-      >
-        {Array.from({ length: 12 }, (_, index) => (
-          <option value={index + 1}>{months[index]}</option>
-        ))}
-      </select>
+        <label className="trainings-filter__field trainings-filter__field--small">
+          <span>Date</span>
+          <select
+            value={urlState.date}
+            onChange={handleChange("date")}
+            className="form-select"
+            aria-label="Select date"
+          >
+            <option value={""}>Not selected</option>
+            {Array.from({ length: 31 }, (_, index) => (
+              <option key={`date-${index + 1}`} value={index + 1}>
+                {index + 1}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <select
-        value={urlState.year}
-        onChange={handleChange("year")}
-        className="form-select"
-      >
-        {Array.from({ length: 10 }, (_, index) => (
-          <option value={2022 + index}>{2022 + index}</option>
-        ))}
-      </select>
+        <label className="trainings-filter__field trainings-filter__field--small">
+          <span>Month</span>
+          <select
+            value={urlState.month}
+            onChange={handleChange("month")}
+            className="form-select"
+            aria-label="Select month"
+          >
+            {Array.from({ length: 12 }, (_, index) => (
+              <option key={`month-${index + 1}`} value={index + 1}>
+                {months[index]}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="trainings-filter__field trainings-filter__field--small">
+          <span>Year</span>
+          <select
+            value={urlState.year}
+            onChange={handleChange("year")}
+            className="form-select"
+            aria-label="Select year"
+          >
+            {Array.from({ length: 10 }, (_, index) => (
+              <option key={`year-${2022 + index}`} value={2022 + index}>
+                {2022 + index}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
     </div>
   );
 };

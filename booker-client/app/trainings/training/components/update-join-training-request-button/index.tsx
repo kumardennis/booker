@@ -9,12 +9,16 @@ import { useUserProfileStore } from "@/stores/user-profile/user-profile";
 
 type PropTypes = {
   studentId: number | undefined;
-  trainingId: number | number;
+  trainingId: number;
+  studentFirstName?: string;
+  studentLastName?: string;
 };
 
 export const UpdateJoinTrainingRequestButton = ({
   studentId,
   trainingId,
+  studentFirstName,
+  studentLastName,
 }: PropTypes) => {
   const router = useRouter();
   const { createEvent } = useHistory();
@@ -33,8 +37,13 @@ export const UpdateJoinTrainingRequestButton = ({
         icon: "✅",
       });
 
+      const targetUserName = [studentFirstName, studentLastName]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
       await createEvent({
-        eventText: `${user?.first_name} ${user?.last_name} deleted the request to join training`,
+        eventText: `${user?.first_name} ${user?.last_name} accepted the request to join training${targetUserName ? ` for ${targetUserName}` : ""}`,
         eventType: "TRAINING_USER_JOIN",
         trainingId: Number(trainingId),
         fromId: user?.id,

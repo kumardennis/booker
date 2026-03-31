@@ -42,10 +42,12 @@ export const UpdateJoinGroupRequestButton = ({
       await createEvent({
         eventType: "GROUP_USER_JOIN",
         groupId: groupId,
-        eventText: `Accepted join group request for ${studentName}`,
+        eventText: `${user?.first_name} ${user?.last_name} accepted join group request for ${studentName}`,
         fromId: user?.id,
         toId: studentId,
       });
+
+      // Send email to student and students
 
       router.refresh();
     }

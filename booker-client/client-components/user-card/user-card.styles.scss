@@ -55,6 +55,13 @@
       border-radius: 50%;
       margin-right: 0.5rem;
     }
+
+    .user-card__item__user__name {
+      &.is-blurred {
+        filter: blur(5px);
+        user-select: none;
+      }
+    }
   }
 
   .user-card__waiting_text {
@@ -69,7 +76,7 @@
   }
 
   .get-in-waiting-list {
-    bottom: 2rem;
+    bottom: 1rem;
     right: 0;
     left: auto;
     width: 100%;

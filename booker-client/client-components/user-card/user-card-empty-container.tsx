@@ -21,6 +21,26 @@ export const UserCardEmptyContainer = ({
   const { createEvent } = useHistory();
 
   const user = useUserProfileStore((state) => state.user);
+
+  const getErrorMessage = (error: unknown) => {
+    if (typeof error === "string") {
+      return error;
+    }
+
+    if (error && typeof error === "object") {
+      const errorObject = error as Record<string, unknown>;
+      const message = errorObject.message ?? errorObject.details;
+
+      if (typeof message === "string" && message.length > 0) {
+        return message;
+      }
+
+      return JSON.stringify(errorObject);
+    }
+
+    return "Request failed";
+  };
+
   if (user?.id !== undefined && userIds.includes(user.id)) {
     return null;
   }
@@ -49,7 +69,7 @@ export const UserCardEmptyContainer = ({
 
     const data = await response.json();
     if (!data.isRequestSuccessfull) {
-      toast(data.error, {
+      toast.error(getErrorMessage(data.error), {
         icon: "❌",
       });
 
@@ -69,6 +89,8 @@ export const UserCardEmptyContainer = ({
       fromId: user?.id,
       toId: undefined,
     });
+
+    // Send email to Trainer
 
     router.refresh();
   };

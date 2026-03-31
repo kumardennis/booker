@@ -39,6 +39,8 @@ export const DeleteJoinGroupRequestButton = ({
         fromId: user?.id,
       });
 
+      // Send email to trainer
+
       router.refresh();
     }
   };

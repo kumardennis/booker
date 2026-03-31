@@ -11,6 +11,7 @@ export const UserCardContainer = (props: {
   isNotActive?: boolean;
   isRequest?: boolean;
   extraInfoSlot?: ReactNode | string;
+  blurUserNames?: boolean;
 }) => {
   const user = useUserProfileStore((state) => state.user);
   if (user?.id !== undefined && props.user.id === user.id) {

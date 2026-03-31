@@ -40,6 +40,10 @@ export const handler = async (req: Request) => {
     if (from_date) query.gte("start_timestamp", from_date);
     if (till_date) query.lte("end_timestamp", till_date);
 
+    query
+      .order("start_timestamp", { ascending: true })
+      .order("id", { ascending: true });
+
     const { data: users, error } = await query;
 
     const responseData = {

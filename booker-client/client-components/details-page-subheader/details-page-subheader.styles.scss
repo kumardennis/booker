@@ -10,6 +10,8 @@
 
     div {
       margin-right: 4rem;
+      display: flex;
+      align-items: center;
 
       .field {
         color: var(--color-gray-dark);

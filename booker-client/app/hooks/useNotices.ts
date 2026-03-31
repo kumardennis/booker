@@ -1,8 +1,8 @@
-import { notificationService } from "@/services/notification-service";
+import { noticeService } from "@/services/notice-service";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 
-export function useHistory() {
+export function useNotices() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +18,7 @@ export function useHistory() {
             setLoading(true);
             setError(null);
             try {
-                const result = await notificationService.createNotice(
+                const result = await noticeService.createNotice(
                     params,
                 )
                     .sendNoticeObjToDB();
@@ -54,7 +54,7 @@ export function useHistory() {
             setLoading(true);
             setError(null);
             try {
-                const result = await notificationService.getNotices({
+                const result = await noticeService.getNotices({
                     group_id,
                     training_id,
                     user_id,
@@ -78,6 +78,6 @@ export function useHistory() {
         getNotices,
         loading,
         error,
-        service: notificationService,
+        service: noticeService,
     };
 }

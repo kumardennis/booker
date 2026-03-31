@@ -1,61 +1,234 @@
 @import "../mixins.scss";
 
 .profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
 
   .profile__content {
-    .profile__content__header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    width: min(1100px, 100%);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .profile__hero {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(var(--color-gray-dark-rgb), 0.4);
+    background: rgba(var(--color-light-rgb), 0.75);
+    box-shadow: 0 18px 30px -22px rgba(var(--color-dark-rgb), 0.45);
+  }
+
+  .profile__hero__picture {
+    width: clamp(4.75rem, 10vw, 6rem);
+    height: clamp(4.75rem, 10vw, 6rem);
+    object-fit: cover;
+    border-radius: 999px;
+    border: 2px solid var(--color-dark);
+    box-shadow: 0 12px 22px -18px rgba(var(--color-dark-rgb), 0.8);
+  }
+
+  .profile__hero__copy {
+    min-width: 0;
+
+    h1 {
+      margin: 0;
+      color: var(--color-dark);
+      font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+      line-height: 1.15;
+      word-break: break-word;
+    }
+  }
+
+  .profile__eyebrow {
+    margin: 0 0 0.4rem;
+    color: var(--color-gray-dark);
+    font-size: 0.75rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .profile__club-name {
+    margin: 0.35rem 0 0;
+    color: rgba(var(--color-dark-rgb), 0.78);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .profile__role-badges {
+    margin-top: 0.7rem;
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .profile__badge {
+    padding: 0.24rem 0.62rem;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--color-dark-rgb), 0.3);
+    background: rgba(var(--color-light-rgb), 0.92);
+    color: var(--color-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .profile__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .profile__stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 7.4rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(var(--color-gray-dark-rgb), 0.38);
+    background: rgba(var(--color-light-rgb), 0.88);
+  }
+
+  .profile__stat-label {
+    color: var(--color-gray-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  .profile__stat-value {
+    color: var(--color-dark);
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-top: 0.2rem;
+  }
+
+  .profile__details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .profile__panel {
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(var(--color-gray-dark-rgb), 0.35);
+    background: rgba(var(--color-light-rgb), 0.78);
+    box-shadow: 0 16px 26px -22px rgba(var(--color-dark-rgb), 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .profile__panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(var(--color-gray-dark-rgb), 0.26);
+
+    h2 {
+      margin: 0;
+      color: var(--color-dark);
+      font-size: 1.02rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .profile__panel__count {
+    min-width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--color-dark-rgb), 0.4);
+    background: rgba(var(--color-light-rgb), 0.92);
+    color: var(--color-dark);
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .profile__row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem;
+    align-items: center;
+    padding: 0.62rem 0.75rem;
+    border: 1px solid rgba(var(--color-gray-dark-rgb), 0.24);
+    border-radius: 0.75rem;
+    background: rgba(var(--color-light-rgb), 0.9);
+  }
+
+  .profile__row__left {
+    color: var(--color-dark);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .profile__row__right {
+    color: rgba(var(--color-dark-rgb), 0.8);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .profile__empty {
+    margin: 0;
+    color: var(--color-gray-dark);
+    font-size: 0.92rem;
+    text-align: center;
+    padding: 0.75rem;
+    border: 1px dashed rgba(var(--color-gray-dark-rgb), 0.45);
+    border-radius: 0.75rem;
+    background: rgba(var(--color-light-rgb), 0.45);
+  }
+
+  @media (max-width: 992px) {
+    .profile__hero {
+      grid-template-columns: 1fr;
+      justify-items: center;
       text-align: center;
-      .profile__content__header__picture {
-        height: 10rem;
-        width: 10rem;
-        object-fit: cover;
-        border-radius: 5rem;
-        border: 0.2rem solid var(--color-dark);
-      }
     }
 
-    .profile__content__details {
+    .profile__hero__copy {
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
 
-      .profile__content__details__item {
-        &.club-name {
-          margin-top: 1rem;
-        }
-        &.groups {
-          margin-top: 1rem;
-          & > h2 {
-            margin-bottom: 0.5rem;
-            text-align: center;
-          }
+    .profile__details-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-          .profile__content__details__item__content {
-            margin-bottom: 0.1rem;
-            border-bottom: 0.2rem solid var(--color-gray-dark);
-          }
-        }
+  @media (max-width: 640px) {
+    padding: 1rem;
 
-        &.trainings {
-          margin-top: 1rem;
-          & > h2 {
-            margin-bottom: 0.5rem;
-            text-align: center;
-          }
+    .profile__hero,
+    .profile__panel {
+      padding: 0.85rem;
+      border-radius: 0.85rem;
+    }
 
-          .profile__content__details__item__content {
-            margin-bottom: 0.1rem;
-            border-bottom: 0.2rem solid var(--color-gray-dark);
-          }
-        }
-      }
+    .profile__stats {
+      width: 100%;
     }
   }
 }

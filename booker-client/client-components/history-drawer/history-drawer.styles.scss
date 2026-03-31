@@ -11,3 +11,12 @@
     }
   }
 }
+
+.drawer-state {
+  padding: 1rem 0 2rem;
+  color: var(--color-dark);
+}
+
+.drawer-state--error {
+  color: var(--color-danger);
+}
