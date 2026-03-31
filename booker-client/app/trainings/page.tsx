@@ -47,7 +47,7 @@ export default async function TrainingsPage({
       month,
       year,
     }),
-    fetch(`process.env.NEXT_PUBLIC_SITE_URL/clubs/api/get-clubs"),
+    fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/clubs/api/get-clubs`),
   ]);
 
   const dataJSON = await responseClubs.json();

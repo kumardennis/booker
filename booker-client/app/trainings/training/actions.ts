@@ -31,7 +31,7 @@ export async function acceptJoinTrainingRequest(
     }
 
     const response = await fetch(
-        "process.env.NEXT_PUBLIC_SITE_URL/trainings/api/join-training-request",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/join-training-request`,
         {
             method: "PUT",
             headers: {
@@ -65,7 +65,7 @@ export async function deleteJoinTrainingRequest(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        "process.env.NEXT_PUBLIC_SITE_URL/groups/api/join-training-request",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/join-training-request`,
         {
             method: "DELETE",
             headers: {
@@ -98,7 +98,7 @@ export async function leaveMyTraining(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        "process.env.NEXT_PUBLIC_SITE_URL/groups/api/update-training-user",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/update-training-user`,
         {
             method: "PUT",
             headers: {
