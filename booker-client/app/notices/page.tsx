@@ -6,10 +6,11 @@ import { HistoryList } from "../../client-components/history-list/history-list";
 export default async function HistoryPage({
   searchParams,
 }: {
-  searchParams: { group_id?: string; training_id?: string };
+  searchParams: Promise<{ group_id?: string; training_id?: string }>;
 }) {
-  const training_id = searchParams.training_id;
-  const group_id = searchParams.group_id;
+  const resolvedSearchParams = await searchParams;
+  const training_id = resolvedSearchParams.training_id;
+  const group_id = resolvedSearchParams.group_id;
 
   const response = await fetch(
     `http://localhost:3000/history/api/get-history`,
@@ -23,7 +24,7 @@ export default async function HistoryPage({
         ...(group_id && { group_id }),
       }),
       cache: "no-store",
-    }
+    },
   );
 
   const data = await response.json();

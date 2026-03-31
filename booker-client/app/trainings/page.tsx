@@ -10,15 +10,16 @@ import { createClient } from "@/utils/supabase/server";
 export default async function TrainingsPage({
   searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     club_id?: string;
     day?: string;
     group_id?: string;
     date?: string;
     month?: string;
     year?: string;
-  };
+  }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -30,12 +31,12 @@ export default async function TrainingsPage({
   const todayMonth = today.getMonth() + 1;
   const todayYear = today.getFullYear();
 
-  const clubId = searchParams.club_id ?? "1";
-  const day = searchParams.day ?? "MONDAY";
-  const groupId = searchParams.group_id ?? "1";
-  const date = searchParams.date ?? todayDate.toString();
-  const month = searchParams.month ?? todayMonth.toString();
-  const year = searchParams.year ?? todayYear.toString();
+  const clubId = resolvedSearchParams.club_id ?? "1";
+  const day = resolvedSearchParams.day ?? "MONDAY";
+  const groupId = resolvedSearchParams.group_id ?? "1";
+  const date = resolvedSearchParams.date ?? todayDate.toString();
+  const month = resolvedSearchParams.month ?? todayMonth.toString();
+  const year = resolvedSearchParams.year ?? todayYear.toString();
 
   const [response, responseClubs] = await Promise.all([
     getGroupTrainings({

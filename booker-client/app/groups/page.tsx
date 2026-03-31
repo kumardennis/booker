@@ -9,18 +9,21 @@ import { jetBrainsMono } from "../fonts";
 export default async function GroupsPage({
   searchParams,
 }: {
-  searchParams: { club_id?: string; day?: string; group_id?: string };
+  searchParams: Promise<{ club_id?: string; day?: string; group_id?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const normalizeSearchParam = (value?: string) => {
     if (!value) return undefined;
     const trimmedValue = value.trim();
     return trimmedValue.length > 0 ? trimmedValue : undefined;
   };
 
-  const clubId = normalizeSearchParam(searchParams.club_id);
-  const groupId = normalizeSearchParam(searchParams.group_id);
+  const clubId = normalizeSearchParam(resolvedSearchParams.club_id);
+  const groupId = normalizeSearchParam(resolvedSearchParams.group_id);
 
-  const clubsResponse = await fetch("http://localhost:3000/clubs/api/get-clubs");
+  const clubsResponse = await fetch(
+    "http://localhost:3000/clubs/api/get-clubs",
+  );
   const clubsData = await clubsResponse.json();
   const clubs: Club[] = clubsData.data ?? [];
 

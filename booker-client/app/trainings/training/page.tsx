@@ -22,9 +22,10 @@ import { LeaveTrainingButton } from "./components/leave-training-button";
 export default async function TrainingPage({
   searchParams,
 }: {
-  searchParams: { training_id?: string };
+  searchParams: Promise<{ training_id?: string }>;
 }) {
-  const training_id = searchParams.training_id;
+  const resolvedSearchParams = await searchParams;
+  const training_id = resolvedSearchParams.training_id;
 
   const supabase = await createClient();
   const user = await supabase.auth.getUser();

@@ -10,17 +10,18 @@ import { createClient } from "@/utils/supabase/server";
 export default async function GroupsByDayPage({
   searchParams,
 }: {
-  searchParams: { club_id?: string; day?: string; group_id?: string };
+  searchParams: Promise<{ club_id?: string; day?: string; group_id?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const shouldBlurUserNames = !user;
 
-  const clubId = searchParams.club_id;
-  const day = searchParams.day;
-  const groupId = searchParams.group_id;
+  const clubId = resolvedSearchParams.club_id;
+  const day = resolvedSearchParams.day;
+  const groupId = resolvedSearchParams.group_id;
 
   const apiQueryParams = new URLSearchParams();
 
@@ -39,8 +40,8 @@ export default async function GroupsByDayPage({
   const groups: ClubGroup[] = data.data ?? [];
 
   const selectedDay =
-    searchParams.day && days.includes(searchParams.day)
-      ? searchParams.day
+    resolvedSearchParams.day && days.includes(resolvedSearchParams.day)
+      ? resolvedSearchParams.day
       : days[0];
 
   const getGroupsInDay = (day: string) =>
@@ -52,7 +53,7 @@ export default async function GroupsByDayPage({
   const setNewURLSearchParams = (day: string) => {
     const params = new URLSearchParams();
 
-    for (const [key, value] of Object.entries(searchParams)) {
+    for (const [key, value] of Object.entries(resolvedSearchParams)) {
       if (value !== undefined && value !== null) {
         params.set(key, String(value));
       }

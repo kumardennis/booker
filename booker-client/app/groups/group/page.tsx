@@ -25,9 +25,10 @@ import { GenerateTrainingsCTA } from "../components/generate-trainings-cta";
 export default async function GroupPage({
   searchParams,
 }: {
-  searchParams: { group_id?: string };
+  searchParams: Promise<{ group_id?: string }>;
 }) {
-  const groupId = searchParams.group_id;
+  const resolvedSearchParams = await searchParams;
+  const groupId = resolvedSearchParams.group_id;
 
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -40,15 +41,14 @@ export default async function GroupPage({
 
   const queryString = apiQueryParams.toString();
 
-  const [clearanceData, groupsData] =
-    await Promise.all([
-      getClearanceForGroup({
-        group_id: groupId,
-        event_types: Object.keys(GroupEventType) as GroupEventType[],
-        user_uuid,
-      }),
-      getClubGroups(queryString),
-    ]);
+  const [clearanceData, groupsData] = await Promise.all([
+    getClearanceForGroup({
+      group_id: groupId,
+      event_types: Object.keys(GroupEventType) as GroupEventType[],
+      user_uuid,
+    }),
+    getClubGroups(queryString),
+  ]);
 
   const groups: ClubGroup[] = groupsData.data;
   const group: ClubGroup | undefined = groups[0];

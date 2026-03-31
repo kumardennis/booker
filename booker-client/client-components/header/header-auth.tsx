@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { jetBrainsMono } from "@/app/fonts";
 
 import "./header-auth.styles.scss";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { User } from "@/app/types";
 import { SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -15,17 +15,14 @@ import { signOutAction } from "@/app/actions";
 export const AuthHeader = () => {
   const supabase = createClient();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [clubName, setClubName] = useState<string | null>(null);
+  const [clubId, setClubId] = useState<string | null>(null);
   const clubNameCacheRef = useRef<Record<string, string | null>>({});
-
-  const clubId = searchParams.get("club_id");
 
   const isPublicBrowseRoute =
     pathname.startsWith("/clubs") ||
     pathname.startsWith("/groups") ||
-    pathname.startsWith("/trainers") ||
     pathname.startsWith("/trainings");
 
   const user = useUserProfileStore((state) => state.user);
@@ -35,6 +32,12 @@ export const AuthHeader = () => {
 
   const getUser = async () => {
     const { data: authData } = await supabase.auth.getUser();
+
+    if (pathname === "/") {
+      router.push("/clubs");
+
+      return;
+    }
 
     if (!authData.user) {
       if (
@@ -125,6 +128,15 @@ export const AuthHeader = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
+  }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    setClubId(params.get("club_id"));
   }, [pathname]);
 
   useEffect(() => {
