@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { jetBrainsMono } from "@/app/fonts";
 
 import "./header-auth.styles.scss";
+import { KlubiqLogo } from "./klubiq-logo";
 import { useRouter, usePathname } from "next/navigation";
 import { User } from "@/app/types";
 import { SettingsIcon } from "lucide-react";
@@ -154,7 +155,9 @@ export const AuthHeader = () => {
 
   return (
     <div className="header-auth flex items-center w-full justify-between">
-      <span className={`${jetBrainsMono.className}`}>BOOKER</span>
+      <Link href="/" className="klubiq-logo-link">
+        <KlubiqLogo height={20} />
+      </Link>
       {!userError && !pathname.includes("sign-in") && (
         <span>{headerCenterText}</span>
       )}

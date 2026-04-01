@@ -5,3 +5,16 @@
   padding: 0 2.125rem;
   justify-content: space-between;
 }
+
+.klubiq-logo-link {
+  display: flex;
+  align-items: center;
+  color: var(--color-light);
+  text-decoration: none;
+  opacity: 0.95;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
