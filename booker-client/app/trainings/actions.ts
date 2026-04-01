@@ -1,4 +1,5 @@
 import { GroupTraining } from "../types";
+import { getTrainingsData } from "./get-trainings-data";
 
 export const getGroupTrainings = async ({
     club_id,
@@ -17,31 +18,17 @@ export const getGroupTrainings = async ({
     year?: string;
     user_id?: string;
 }) => {
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/get-group-trainings`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                club_id,
-                day,
-                group_id,
-                date,
-                month,
-                year,
-                user_id,
-            }),
-            cache: "no-store",
-        },
-    );
+    const data = await getTrainingsData({
+        clubId: club_id,
+        day,
+        groupId: group_id,
+        date,
+        month,
+        year,
+        userId: user_id,
+    });
 
-    const data = await response.json();
-
-    const trainings: GroupTraining[] = data.data;
-
-    console.log("getGroupTrainings response:", data);
+    const trainings: GroupTraining[] = data.data ?? [];
 
     return trainings;
 };

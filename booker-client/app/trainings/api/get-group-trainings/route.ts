@@ -1,15 +1,7 @@
 import { headers } from "next/headers";
 import { type NextRequest } from "next/server";
 
-type BodyType = {
-    club_id: string | undefined;
-    day: string | undefined;
-    training_id: string | undefined;
-    group_id: string | undefined;
-    till_date: string | undefined;
-    from_date: string | undefined;
-    user_id: string | undefined;
-};
+import { getTrainingsData } from "../../get-trainings-data";
 
 export async function POST(request: NextRequest) {
     const requestData = request.body ? await request.json() : {};
@@ -22,6 +14,7 @@ export async function POST(request: NextRequest) {
         year,
         group_id,
         till_date,
+        from_date,
         training_id,
         user_id,
     } = requestData;
@@ -29,45 +22,19 @@ export async function POST(request: NextRequest) {
     const headersList = await headers();
     const auth = headersList.get("Authorization");
 
-    const body: BodyType = {
-        club_id: undefined,
-        day: undefined,
-        training_id: undefined,
-        group_id: undefined,
-        till_date: undefined,
-        from_date: undefined,
-        user_id: undefined,
-    };
-
-    const dateForQuery = year && month && date && day
-        ? (day && !date)
-            ? `${year}-${month.toString().padStart(2, "0")}-01`
-            : `${year}-${month.toString().padStart(2, "0")}-${
-                date.toString().padStart(2, "0")
-            }`
-        : undefined;
-
-    body.club_id = club_id;
-    body.day = !date ? day : undefined;
-    body.training_id = training_id;
-    body.group_id = group_id;
-    body.from_date = dateForQuery;
-    body.till_date = till_date;
-    body.user_id = user_id;
-
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/trainings/get-group-trainings`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": auth ?? "",
-            },
-            body: JSON.stringify(Object.keys(requestData).length ? body : {}),
-        },
-    );
-
-    const data = await response.json();
+    const data = await getTrainingsData({
+        clubId: club_id,
+        day,
+        date,
+        month,
+        year,
+        groupId: group_id,
+        tillDate: till_date,
+        fromDate: from_date,
+        trainingId: training_id ? training_id.toString() : undefined,
+        userId: user_id ? user_id.toString() : undefined,
+        authorization: auth,
+    });
 
     return Response.json(data);
 }

@@ -6,6 +6,7 @@ import { ClubGroup } from "@/app/types";
 import { days } from "@/app/const";
 import { UsersCard } from "@/client-components/users-card/users-card";
 import { createClient } from "@/utils/supabase/server";
+import { getGroupsData } from "../get-groups-data";
 
 export default async function GroupsByDayPage({
   searchParams,
@@ -23,19 +24,11 @@ export default async function GroupsByDayPage({
   const day = resolvedSearchParams.day;
   const groupId = resolvedSearchParams.group_id;
 
-  const apiQueryParams = new URLSearchParams();
-
-  if (clubId) apiQueryParams.append("club_id", clubId);
-  if (day) apiQueryParams.append("day", day);
-  if (groupId) apiQueryParams.append("group_id", groupId);
-
-  const queryString = apiQueryParams.toString();
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/get-club-groups?${queryString}`,
-  );
-
-  const data = await response.json();
+  const data = await getGroupsData({
+    clubId,
+    day,
+    groupId,
+  });
 
   const groups: ClubGroup[] = data.data ?? [];
 

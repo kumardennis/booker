@@ -1,25 +1,10 @@
 "use server";
 import { getUserProfile } from "@/lib/user-cache";
 import { revalidatePath } from "next/cache";
+import { getTrainingsData } from "../get-trainings-data";
 
 export const getTrainings = async (training_id: number) => {
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/get-group-trainings`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                training_id,
-            }),
-            cache: "no-store",
-        },
-    );
-
-    const data = await response.json();
-
-    return data;
+    return getTrainingsData({ trainingId: training_id.toString() });
 };
 
 export async function acceptJoinTrainingRequest(

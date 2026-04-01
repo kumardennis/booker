@@ -5,6 +5,9 @@ import cn from "classnames";
 import { format, parse } from "date-fns";
 import { days } from "../const";
 import { jetBrainsMono } from "../fonts";
+import { headers } from "next/headers";
+import { getClubsData } from "../clubs/get-clubs-data";
+import { getGroupsData } from "./get-groups-data";
 
 export default async function GroupsPage({
   searchParams,
@@ -20,14 +23,31 @@ export default async function GroupsPage({
 
   const clubId = normalizeSearchParam(resolvedSearchParams.club_id);
   const groupId = normalizeSearchParam(resolvedSearchParams.group_id);
+  const headersList = await headers();
+  const authorization = headersList.get("Authorization");
 
-  const clubsResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/clubs/api/get-clubs`,
-  );
-  const clubsData = await clubsResponse.json();
-  const clubs: Club[] = clubsData.data ?? [];
+  const loadClubs = () => getClubsData({ authorization });
+  const loadGroups = (targetClubId?: string) =>
+    getGroupsData({
+      clubId: targetClubId,
+      groupId,
+      authorization,
+    });
 
+  const [clubsResponse, groupsResponseForClub] = clubId
+    ? await Promise.all([loadClubs(), loadGroups(clubId)])
+    : [await loadClubs(), null];
+
+  const clubs: Club[] = Array.isArray(clubsResponse.data)
+    ? clubsResponse.data
+    : [];
   const selectedClubId = clubId ?? String(clubs[0]?.id ?? "");
+
+  const groupsResponse =
+    groupsResponseForClub ?? (await loadGroups(selectedClubId));
+  const groups: ClubGroup[] = Array.isArray(groupsResponse.data)
+    ? groupsResponse.data
+    : [];
 
   const apiQueryParams = new URLSearchParams();
 
@@ -36,12 +56,7 @@ export default async function GroupsPage({
 
   const queryString = apiQueryParams.toString();
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/get-club-groups?${queryString}`,
-  );
-  const data = await response.json();
-
-  const groups: ClubGroup[] = data.data ?? [];
+  const effectiveParams = new URLSearchParams(queryString);
 
   const getGroupsInDay = (day: string) =>
     groups?.filter((group) => group.day.includes(day)) ?? [];
@@ -139,7 +154,9 @@ export default async function GroupsPage({
             </div>
 
             <div className="groups-times-aggregator__item__cta">
-              <Link href={`/groups/groups-by-day?${apiQueryParams}&day=${day}`}>
+              <Link
+                href={`/groups/groups-by-day?${effectiveParams}&day=${day}`}
+              >
                 <div className="groups-times-aggregator__item__cta__button">
                   Check groups
                 </div>

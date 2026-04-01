@@ -10,7 +10,6 @@ import { UserCard } from "@/client-components/user-card/user-card";
 import { DetailsPageHeader } from "@/client-components/details-page-header/details-page-header";
 import { DetailsPageSubHeader } from "@/client-components/details-page-subheader/details-page-subheader";
 import { getClearanceForTraining } from "@/app/clearance/utils/actions";
-import { getTrainings } from "./actions";
 import { createClient } from "@/utils/supabase/server";
 import { getPermissions } from "@/app/clearance/utils/helpers";
 import { UserCardEmptyContainer } from "@/client-components/user-card/user-card-empty-container";
@@ -18,6 +17,7 @@ import { DeleteJoinTrainingRequestButton } from "./components/delete-join-traini
 import { UpdateJoinTrainingRequestButton } from "./components/update-join-training-request-button";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
 import { LeaveTrainingButton } from "./components/leave-training-button";
+import { getTrainingsData } from "../get-trainings-data";
 
 export default async function TrainingPage({
   searchParams,
@@ -38,10 +38,13 @@ export default async function TrainingPage({
       event_types: Object.keys(TrainingEventType) as GroupEventType[],
       user_uuid,
     }),
-    getTrainings(Number(training_id)),
+    getTrainingsData({
+      trainingId: training_id,
+      userId: user_uuid,
+    }),
   ]);
 
-  const trainings: GroupTraining[] = trainingData.data;
+  const trainings: GroupTraining[] = trainingData.data ?? [];
   const training: GroupTraining | undefined = trainings[0];
 
   if (!training) {

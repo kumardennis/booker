@@ -14,13 +14,14 @@ import { getClearanceForGroup } from "@/app/clearance/utils/actions";
 import { UserCardContainer } from "@/client-components/user-card/user-card-container";
 import { createClient } from "@/utils/supabase/server";
 import { LeaveGroupButton } from "../components/leave-group-button";
-import { deleteJoinGroupRequest, getClubGroups } from "./actions";
+import { deleteJoinGroupRequest } from "./actions";
 import toast from "react-hot-toast";
 import { DeleteJoinGroupRequestButton } from "../components/delete-join-group-request-button";
 import { UpdateJoinGroupRequestButton } from "../components/update-join-group-request-button";
 import { getPermissions } from "@/app/clearance/utils/helpers";
 import Link from "next/link";
 import { GenerateTrainingsCTA } from "../components/generate-trainings-cta";
+import { getGroupsData } from "../get-groups-data";
 
 export default async function GroupPage({
   searchParams,
@@ -35,22 +36,19 @@ export default async function GroupPage({
   const shouldBlurUserNames = !user.data.user;
   const user_uuid = user.data.user?.id;
 
-  const apiQueryParams = new URLSearchParams();
-
-  if (groupId) apiQueryParams.append("group_id", groupId);
-
-  const queryString = apiQueryParams.toString();
-
   const [clearanceData, groupsData] = await Promise.all([
     getClearanceForGroup({
       group_id: groupId,
       event_types: Object.keys(GroupEventType) as GroupEventType[],
       user_uuid,
     }),
-    getClubGroups(queryString),
+    getGroupsData({
+      groupId,
+      userId: user_uuid,
+    }),
   ]);
 
-  const groups: ClubGroup[] = groupsData.data;
+  const groups: ClubGroup[] = groupsData.data ?? [];
   const group: ClubGroup | undefined = groups[0];
 
   const canUserGenerateTraining = getPermissions(

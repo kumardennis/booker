@@ -4,8 +4,9 @@ import { TrainingsFilter } from "./components/trainings-filter";
 import "./trainings.styles.scss";
 import { UsersCard } from "@/client-components/users-card/users-card";
 import Link from "next/link";
-import { getGroupTrainings } from "./actions";
 import { createClient } from "@/utils/supabase/server";
+import { getTrainingsData } from "./get-trainings-data";
+import { getClubsData } from "../clubs/get-clubs-data";
 
 export default async function TrainingsPage({
   searchParams,
@@ -38,23 +39,22 @@ export default async function TrainingsPage({
   const month = resolvedSearchParams.month ?? todayMonth.toString();
   const year = resolvedSearchParams.year ?? todayYear.toString();
 
-  const [response, responseClubs] = await Promise.all([
-    getGroupTrainings({
-      club_id: clubId,
+  const [trainingsData, clubsData] = await Promise.all([
+    getTrainingsData({
+      clubId,
       day,
-      group_id: groupId,
+      groupId,
       date,
       month,
       year,
+      userId: user?.id,
     }),
-    fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/clubs/api/get-clubs`),
+    getClubsData(),
   ]);
 
-  const dataJSON = await responseClubs.json();
+  const clubs: Club[] = clubsData.data ?? [];
 
-  const clubs: Club[] = dataJSON.data;
-
-  const trainings: GroupTraining[] = response;
+  const trainings: GroupTraining[] = trainingsData.data ?? [];
   const totalAttendees = trainings.reduce(
     (acc, training) =>
       acc + (training.users?.filter((member) => member.is_active).length ?? 0),
