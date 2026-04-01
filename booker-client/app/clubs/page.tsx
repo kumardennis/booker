@@ -2,14 +2,23 @@ import { jetBrainsMono } from "../fonts";
 import { Club } from "../types";
 import "./clubs.styles.scss";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { getClubsData } from "./get-clubs-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function ClubsPage() {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/clubs/api/get-clubs`,
-  );
-  const dataJSON = await response.json();
+  const headersList = await headers();
+  const authorization = headersList.get("Authorization");
 
-  const clubs: Club[] = dataJSON.data;
+  let clubs: Club[] = [];
+
+  try {
+    const dataJSON = await getClubsData({ authorization });
+    clubs = Array.isArray(dataJSON.data) ? dataJSON.data : [];
+  } catch {
+    clubs = [];
+  }
 
   return (
     <section className="clubs-page flex-1 w-full flex flex-col gap-10">

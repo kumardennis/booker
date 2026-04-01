@@ -1,31 +1,28 @@
 import { headers } from "next/headers";
 import { type NextRequest } from "next/server";
+import { getClubsData } from "../../get-clubs-data";
 
 export async function GET(request: NextRequest) {
-    const club_id = request.nextUrl.searchParams.get("club_id");
+    const clubId = request.nextUrl.searchParams.get("club_id") ?? undefined;
 
     const headersList = await headers();
-    const auth = headersList.get("Authorization");
+    const authorization = headersList.get("Authorization");
 
-    const body: { club_id?: string } = {};
+    try {
+        const data = await getClubsData({
+            clubId,
+            authorization,
+        });
 
-    if (club_id) {
-        body.club_id = club_id;
-    }
-
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/clubs/get-clubs`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": auth ?? "",
+        return Response.json(data);
+    } catch (error) {
+        return Response.json(
+            {
+                isRequestSuccessfull: false,
+                data: [],
+                error,
             },
-            body: JSON.stringify(body),
-        },
-    );
-
-    const data = await response.json();
-
-    return Response.json(data);
+            { status: 500 },
+        );
+    }
 }
