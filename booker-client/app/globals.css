@@ -46,3 +46,36 @@ main {
   padding: 2rem;
   overflow-x: auto;
 }
+
+.route-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 3px;
+  background: rgba(var(--color-gray-dark-rgb), 0.25);
+  overflow: hidden;
+}
+
+.route-loader__bar {
+  height: 100%;
+  width: 35%;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-success-rgb), 0.35) 0%,
+    rgba(var(--color-success-rgb), 0.85) 55%,
+    rgba(var(--color-success-rgb), 0.35) 100%
+  );
+  box-shadow: 0 0 12px rgba(var(--color-success-rgb), 0.55);
+  animation: routeLoaderSlide 1.1s ease-in-out infinite;
+}
+
+@keyframes routeLoaderSlide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
