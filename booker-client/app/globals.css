@@ -30,21 +30,48 @@
 
 body {
   background: linear-gradient(45deg, #c3c3c3 0%, #ededed 13%, #ededed 80%, #c3c3c3 99%);
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
   font-size: var(--font-size-md);
 }
 
+/* Layout grid */
+.app-layout {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  min-height: 100vh;
+}
+
 aside {
-  float: left;
-  width: 20%;
+  width: 100%;
 }
 
 main {
-  float: right;
-  width: 80%;
+  width: 100%;
   padding: 2rem;
-  overflow-x: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* display:contents removes the aside box but keeps fixed children (navbar-bottom) visible */
+  aside {
+    display: contents;
+  }
+
+  /* Hide only the sidebar nav, not the fixed bottom nav */
+  .navbar {
+    display: none !important;
+  }
+
+  main {
+    padding: 1rem;
+    padding-bottom: 5rem;
+  }
 }
 
 .route-loader {

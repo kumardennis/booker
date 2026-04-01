@@ -28,11 +28,13 @@ export default function RootLayout({
 
         <Toaster position="bottom-center" />
 
-        <aside>
-          <Navbar />
-        </aside>
+        <div className="app-layout">
+          <aside>
+            <Navbar />
+          </aside>
 
-        <main>{children}</main>
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );
