@@ -1,5 +1,6 @@
 "use client";
 
+import { ClubWithAddresses } from "@/app/clubs/get-clubs-data";
 import { days, months } from "@/app/const";
 import { Club } from "@/app/types";
 import { getDateByDayOfWeek } from "@/lib/utils";
@@ -17,7 +18,7 @@ type urlStateType = {
 };
 
 type PropTypes = {
-  clubs: Club[];
+  clubs: ClubWithAddresses[];
 };
 
 export const TrainingsFilter = ({ clubs }: PropTypes) => {

@@ -6,7 +6,7 @@ import { UsersCard } from "@/client-components/users-card/users-card";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { getTrainingsData } from "./get-trainings-data";
-import { getClubsData } from "../clubs/get-clubs-data";
+import { ClubWithAddresses, getClubsData } from "../clubs/get-clubs-data";
 
 export default async function TrainingsPage({
   searchParams,
@@ -52,7 +52,7 @@ export default async function TrainingsPage({
     getClubsData(),
   ]);
 
-  const clubs: Club[] = clubsData.data ?? [];
+  const clubs: ClubWithAddresses[] = clubsData.data ?? [];
 
   const trainings: GroupTraining[] = trainingsData.data ?? [];
   const totalAttendees = trainings.reduce(

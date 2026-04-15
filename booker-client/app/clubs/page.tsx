@@ -3,7 +3,7 @@ import { Club } from "../types";
 import "./clubs.styles.scss";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { getClubsData } from "./get-clubs-data";
+import { ClubWithAddresses, getClubsData } from "./get-clubs-data";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,7 @@ export default async function ClubsPage() {
   const headersList = await headers();
   const authorization = headersList.get("Authorization");
 
-  let clubs: Club[] = [];
+  let clubs: ClubWithAddresses[] = [];
 
   try {
     const dataJSON = await getClubsData({ authorization });
@@ -52,7 +52,11 @@ export default async function ClubsPage() {
           >
             <article className="club-thumbnail">
               <div className="club-media">
-                <img src={club.image} alt={club.name} loading="lazy" />
+                <img
+                  src={club.image ?? undefined}
+                  alt={club.name}
+                  loading="lazy"
+                />
               </div>
               <div className="club-thumbnail-info">
                 <p className="club-label">Club #{club.id}</p>
