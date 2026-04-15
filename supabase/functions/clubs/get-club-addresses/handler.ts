@@ -5,14 +5,16 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { data: clubs, error } = await supabase
-      .from("clubs")
-      .select("*, addresses(*), trainers:users(*)")
-      .eq("users.is_trainer", true);
+    const { club_id } = await req.json();
+
+    const { data: addresses, error } = await supabase
+      .from("addresses")
+      .select("*")
+      .match({ ...(club_id && { club_id }) });
 
     const responseData = {
       isRequestSuccessfull: error === null,
-      data: clubs,
+      data: addresses,
       error,
     };
 

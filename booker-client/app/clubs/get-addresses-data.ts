@@ -1,32 +1,23 @@
 import "server-only";
 
-import type { Database } from "../../../database.types";
+import { Address } from "../types";
 
-type ClubRow = Database["public"]["Tables"]["clubs"]["Row"];
-type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
-type UserRow = Database["public"]["Tables"]["users"]["Row"];
-
-export type ClubWithAddresses = ClubRow & {
-    addresses?: AddressRow[];
-    trainers?: UserRow[];
-};
-
-type GetClubsDataOptions = {
+type GetAddressesDataOptions = {
     clubId?: string;
     authorization?: string | null;
 };
 
-type ClubsFunctionResponse = {
+type AddressesFunctionResponse = {
     isRequestSuccessfull?: boolean;
     isRequestSuccessful?: boolean;
-    data?: ClubWithAddresses[];
+    data?: Address[];
     error?: unknown;
 };
 
-export const getClubsData = async ({
+export const getAddressesData = async ({
     clubId,
     authorization,
-}: GetClubsDataOptions = {}): Promise<ClubsFunctionResponse> => {
+}: GetAddressesDataOptions = {}): Promise<AddressesFunctionResponse> => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -51,7 +42,7 @@ export const getClubsData = async ({
         : "";
 
     const response = await fetch(
-        `${supabaseUrl}/functions/v1/clubs/get-clubs`,
+        `${supabaseUrl}/functions/v1/clubs/get-club-addresses`,
         {
             method: "POST",
             headers: {
@@ -65,13 +56,14 @@ export const getClubsData = async ({
     );
 
     const text = await response.text();
+
     if (!text) {
         return {
             isRequestSuccessfull: false,
             data: [],
-            error: { message: "Empty response from clubs function" },
+            error: { message: "Empty response from addresses function" },
         };
     }
 
-    return JSON.parse(text) as ClubsFunctionResponse;
+    return JSON.parse(text) as AddressesFunctionResponse;
 };

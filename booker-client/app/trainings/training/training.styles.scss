@@ -240,6 +240,33 @@
     color: var(--color-gray-dark);
     font-size: clamp(1.1rem, 2.4vw, 1.35rem);
   }
+
+  .training-details__address {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.35rem;
+    color: var(--color-dark);
+  }
+
+  .training-details__address-label {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--color-gray-dark);
+    border: 1px solid rgba(var(--color-dark-rgb), 0.14);
+    border-radius: 999px;
+    padding: 0.2rem 0.45rem;
+    background-color: rgba(var(--color-light-rgb), 0.6);
+  }
+
+  .training-details__address-value {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--color-gray-dark);
+  }
 }
 
 .training-details--empty {

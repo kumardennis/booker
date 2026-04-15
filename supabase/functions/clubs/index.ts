@@ -6,11 +6,13 @@ import {
 import { corsHeaders } from "../_shared/cors.ts";
 
 import { handler as get_clubs } from "./get-clubs/handler.ts";
+import { handler as get_club_addresses } from "./get-club-addresses/handler.ts";
 
 console.log("Setting up localdev");
 
 const handlers = {
   "get-clubs": get_clubs,
+  "get-club-addresses": get_club_addresses,
 } as unknown as Record<string, Handler>;
 
 function localdevHandler(req: Request, connInfo: ConnInfo) {

@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { Club, ClubGroup } from "../types";
+import { Club, ClubGroup, CRUDType, GroupEventType } from "../types";
 import "./groups.styles.scss";
 import cn from "classnames";
 import { format, parse } from "date-fns";
 import { days } from "../const";
 import { jetBrainsMono } from "../fonts";
 import { headers } from "next/headers";
-import { getClubsData } from "../clubs/get-clubs-data";
+import { ClubWithAddresses, getClubsData } from "../clubs/get-clubs-data";
 import { getGroupsData } from "./get-groups-data";
+import { getClearanceForGroup } from "../clearance/utils/actions";
+import { createClient } from "@/utils/supabase/server";
+import { getPermissions } from "../clearance/utils/helpers";
 
 export default async function GroupsPage({
   searchParams,
@@ -26,6 +29,10 @@ export default async function GroupsPage({
   const headersList = await headers();
   const authorization = headersList.get("Authorization");
 
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+  const user_uuid = user.data.user?.id;
+
   const loadClubs = () => getClubsData({ authorization });
   const loadGroups = (targetClubId?: string) =>
     getGroupsData({
@@ -34,11 +41,18 @@ export default async function GroupsPage({
       authorization,
     });
 
-  const [clubsResponse, groupsResponseForClub] = clubId
-    ? await Promise.all([loadClubs(), loadGroups(clubId)])
-    : [await loadClubs(), null];
+  const [clearanceData, clubsResponse, groupsResponseForClub] =
+    await Promise.all([
+      getClearanceForGroup({
+        group_id: groupId,
+        event_types: Object.keys(GroupEventType) as GroupEventType[],
+        user_uuid,
+      }),
+      loadClubs(),
+      loadGroups(clubId),
+    ]);
 
-  const clubs: Club[] = Array.isArray(clubsResponse.data)
+  const clubs: ClubWithAddresses[] = Array.isArray(clubsResponse.data)
     ? clubsResponse.data
     : [];
   const selectedClubId = clubId ?? String(clubs[0]?.id ?? "");
@@ -63,6 +77,12 @@ export default async function GroupsPage({
 
   const totalGroups = groups?.length ?? 0;
 
+  const canUserCreateGroup = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_CREATE,
+    CRUDType.CREATE,
+  )?.forPeople.others;
+
   return (
     <section className="groups-page flex-1 w-full flex flex-col gap-6">
       <header className="groups-hero">
@@ -75,6 +95,11 @@ export default async function GroupsPage({
             Discover training groups by day and check which slots still have
             open spots.
           </p>
+          {canUserCreateGroup && (
+            <Link href="/groups/create" className="groups-hero__create-link">
+              Create new group
+            </Link>
+          )}
         </div>
         <div className="groups-hero__stats" aria-label="total groups">
           <span className={`${jetBrainsMono.className} groups-hero__value`}>

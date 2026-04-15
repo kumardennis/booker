@@ -40,7 +40,6 @@ export default async function TrainingPage({
     }),
     getTrainingsData({
       trainingId: training_id,
-      userId: user_uuid,
     }),
   ]);
 
@@ -89,6 +88,8 @@ export default async function TrainingPage({
   const activeUsersCount =
     training.users?.filter((user) => user.is_active).length ?? 0;
 
+  const trainingAddress = training.club_groups?.addresses?.address;
+
   return (
     <div className="training-details">
       <section className="training-details__top-card">
@@ -113,6 +114,15 @@ export default async function TrainingPage({
             </div>
           }
         />
+
+        {trainingAddress && (
+          <div className="training-details__address">
+            <span className="training-details__address-label">Address</span>
+            <span className="training-details__address-value">
+              {trainingAddress}
+            </span>
+          </div>
+        )}
 
         <hr />
 

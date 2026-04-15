@@ -22,6 +22,9 @@ import { getPermissions } from "@/app/clearance/utils/helpers";
 import Link from "next/link";
 import { GenerateTrainingsCTA } from "../components/generate-trainings-cta";
 import { getGroupsData } from "../get-groups-data";
+import { headers } from "next/headers";
+import { getClubsData } from "@/app/clubs/get-clubs-data";
+import { UpdateGroupTrainer } from "../components/update-group-trainer";
 
 export default async function GroupPage({
   searchParams,
@@ -30,6 +33,8 @@ export default async function GroupPage({
 }) {
   const resolvedSearchParams = await searchParams;
   const groupId = resolvedSearchParams.group_id;
+  const headersList = await headers();
+  const authorization = headersList.get("Authorization");
 
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -44,7 +49,6 @@ export default async function GroupPage({
     }),
     getGroupsData({
       groupId,
-      userId: user_uuid,
     }),
   ]);
 
@@ -78,6 +82,12 @@ export default async function GroupPage({
     CRUDType.UPDATE,
   );
 
+  const canUserUpdateTrainer = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_UPDATE_TRAINER,
+    CRUDType.UPDATE,
+  )?.forPeople.others;
+
   if (!group) {
     return (
       <div className="group-details group-details--empty">
@@ -88,6 +98,29 @@ export default async function GroupPage({
       </div>
     );
   }
+
+  const clubsResponse = await getClubsData({
+    clubId: String(group.club_id),
+    authorization,
+  });
+
+  const selectedClub = Array.isArray(clubsResponse.data)
+    ? clubsResponse.data[0]
+    : undefined;
+
+  const trainers = Array.isArray(selectedClub?.trainers)
+    ? selectedClub.trainers
+    : [];
+
+  const currentTrainerId = group.trainers?.[0]?.trainer?.id;
+
+  const groupAddressData = Array.isArray(group.addresses)
+    ? group.addresses[0]
+    : (group.addresses as unknown as { name?: string; address?: string });
+
+  const groupAddress = [groupAddressData?.name, groupAddressData?.address]
+    .filter((item): item is string => Boolean(item && item.trim().length > 0))
+    .join(" - ");
 
   const pendingRequests =
     group.requests?.filter(
@@ -121,7 +154,12 @@ export default async function GroupPage({
             </span>
           }
           rightRow2Node={
-            <span className="group-details__header__trainers">{`${group.trainers[0].trainer.first_name} ${group.trainers[0].trainer.last_name}`}</span>
+            <UpdateGroupTrainer
+              groupId={group.id}
+              currentTrainerId={currentTrainerId}
+              trainers={trainers}
+              canUserUpdateTrainer={Boolean(canUserUpdateTrainer)}
+            />
           }
           rightRow1Node={
             <div className="group-details__header__cta-row">
@@ -137,6 +175,13 @@ export default async function GroupPage({
             </div>
           }
         />
+
+        {groupAddress && (
+          <div className="group-details__address">
+            <span className="group-details__address-label">Address</span>
+            <span className="group-details__address-value">{groupAddress}</span>
+          </div>
+        )}
 
         <hr />
 

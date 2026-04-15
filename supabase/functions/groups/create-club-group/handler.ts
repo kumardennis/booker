@@ -9,32 +9,49 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { club_id, day, group_id, user_id } = await req.json();
+    const {
+      club_id,
+      address_id,
+      max_occupancy,
+      once_in_number_of_weeks,
+      day,
+      start_time,
+      end_time,
+    } = await req.json();
 
-    if (!confirmedRequiredParams([])) {
+    if (
+      !confirmedRequiredParams([
+        club_id,
+        address_id,
+        max_occupancy,
+        once_in_number_of_weeks,
+        day,
+        start_time,
+        end_time,
+      ])
+    ) {
       return new Response(JSON.stringify(errorResponseData), {
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: users, error } = await supabase
+    const { data: group, error } = await supabase
       .from("club_groups")
-      .select(
-        `*, clubs(*), addresses(*), requests:join_group_requests(id, created_at, is_accepted, is_rejected, comments, user:users(*)), users:users_groups${
-          user_id ? "!inner" : ""
-        }(id, is_active, user:users(*)), trainers:trainers_groups(id, created_at, trainer:users(*)).order(id, { ascending: false })`,
-      )
-      .match({
-        ...(club_id && { club_id }),
-        ...(day && { day }),
-        ...(group_id && { id: group_id }),
-        ...(user_id &&
-          { "users_groups.user_id": user_id, "users_groups.is_active": true }),
-      });
+      .insert({
+        club_id: Number(club_id),
+        address_id: Number(address_id),
+        max_occupancy: Number(max_occupancy),
+        once_in_number_of_weeks: Number(once_in_number_of_weeks),
+        day,
+        start_time,
+        end_time,
+      })
+      .select("*")
+      .single();
 
     const responseData = {
       isRequestSuccessfull: error === null,
-      data: users,
+      data: group,
       error,
     };
 

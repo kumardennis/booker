@@ -1,6 +1,6 @@
 export type Club = {
     id: number;
-    created_at: Date;
+    created_at: Date | string;
     name: string;
     email: string;
     phone: string;
@@ -11,7 +11,7 @@ export type Club = {
 
 export type ClubGroup = {
     id: number;
-    created_at: Date;
+    created_at: Date | string;
     club_id: number;
     address_id: number;
     max_occupancy: number;
@@ -20,7 +20,7 @@ export type ClubGroup = {
     day: string;
     end_time: string;
     clubs: Club[];
-    addresses: Address[];
+    addresses: Address;
     users: UserElementGroup[];
     trainers: TrainerElement[];
     requests: JoinGroupRequest[];
@@ -141,6 +141,8 @@ export enum GroupEventType {
     GROUP_ARCHIVED = "GROUP_ARCHIVED",
     GROUP_OTHERS = "GROUP_OTHERS",
     GROUP_GENERATE_TRAINING = "GROUP_GENERATE_TRAINING",
+    GROUP_UPDATE_TRAINER = "GROUP_UPDATE_TRAINER",
+    GROUP_CREATE = "GROUP_CREATE",
 }
 
 export enum TrainingEventType {
@@ -153,6 +155,7 @@ export enum TrainingEventType {
     TRAINING_OCCUPANCY_CHANGE = "TRAINING_OCCUPANCY_CHANGE",
     TRAINING_ARCHIVED = "TRAINING_ARCHIVED",
     TRAINING_OTHERS = "TRAINING_OTHERS",
+    TRAINING_UPDATE_TRAINER = "TRAINING_UPDATE_TRAINER",
 }
 
 export type EventAffectsPeople = {

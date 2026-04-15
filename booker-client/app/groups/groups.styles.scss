@@ -41,6 +41,15 @@
     font-size: clamp(0.92rem, 1.2vw, 1.02rem);
   }
 
+  .groups-hero__create-link {
+    @include solid-button();
+    margin-top: 0.85rem;
+    display: inline-flex;
+    text-decoration: none;
+    border-radius: 0.7rem;
+    font-size: 0.88rem;
+  }
+
   .groups-hero__stats {
     min-width: 120px;
     border: 1px solid rgba(var(--color-dark-rgb), 0.1);

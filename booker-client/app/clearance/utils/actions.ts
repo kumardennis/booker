@@ -29,7 +29,7 @@ export async function getClearanceForGroup(requestData: BodyTypeGroup) {
         user_uuid,
     } = requestData;
 
-    if (!group_id || !event_types) {
+    if (!event_types) {
         return {
             error: "Missing required fields",
         };
@@ -61,16 +61,6 @@ export async function getClearanceForGroup(requestData: BodyTypeGroup) {
                 : "users.user_id.user_id",
             userData?.user_id,
         );
-
-    // if (error) {
-    //     return Response.json({
-    //         error: "FUCKKKK",
-    //         groupData,
-    //         authData,
-    //     }, {
-    //         status: 500,
-    //     });
-    // }
 
     const responseToSend: {
         eventsPermissions: EventTypePermission[];
