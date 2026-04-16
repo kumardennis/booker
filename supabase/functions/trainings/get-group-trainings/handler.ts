@@ -9,9 +9,16 @@ export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
   try {
-    const { club_id, day, from_date, till_date, training_id, user_id } =
-      await req
-        .json();
+    const {
+      club_id,
+      day,
+      from_date,
+      till_date,
+      training_id,
+      user_id,
+      is_active,
+    } = await req
+      .json();
 
     if (!confirmedRequiredParams([])) {
       return new Response(JSON.stringify(errorResponseData), {
@@ -35,6 +42,8 @@ export const handler = async (req: Request) => {
             "users_trainings.user_id": user_id,
             "users_trainings.is_active": true,
           }),
+        ...(is_active !== undefined &&
+          { "is_active": is_active }),
       });
 
     if (from_date) query.gte("start_timestamp", from_date);

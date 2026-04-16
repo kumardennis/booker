@@ -1,5 +1,6 @@
 "use server";
 import { getUserProfile } from "@/lib/user-cache";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 const getErrorMessage = (error: unknown): string => {
@@ -202,6 +203,87 @@ export async function updateGroupTrainer(
 
     if (data.error) {
         throw new Error(getErrorMessage(data.error));
+    }
+
+    revalidatePath("/", "layout");
+
+    return data;
+}
+
+export async function syncUserReplacementToTrainings(
+    group_id: number | undefined,
+    old_user_id: number | undefined,
+    new_user_id?: number | null,
+) {
+    if (!group_id || !old_user_id) {
+        return null;
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.rpc(
+        "sync_user_replacement_to_trainings",
+        {
+            _group_id: group_id,
+            _old_user_id: old_user_id,
+            _new_user_id: new_user_id ?? null,
+        },
+    );
+
+    if (error) {
+        throw new Error(getErrorMessage(error));
+    }
+
+    revalidatePath("/", "layout");
+
+    return data;
+}
+
+export async function syncGroupChangesToTrainings(
+    group_id: number | undefined,
+) {
+    if (!group_id) {
+        return null;
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.rpc(
+        "sync_group_changes_to_trainings",
+        {
+            _group_id: group_id,
+        },
+    );
+
+    if (error) {
+        throw new Error(getErrorMessage(error));
+    }
+
+    revalidatePath("/", "layout");
+
+    return data;
+}
+
+export async function setGroupUpcomingUsersTrainingsActive(
+    group_id: number | undefined,
+    is_active: boolean | undefined,
+) {
+    if (!group_id || typeof is_active !== "boolean") {
+        return null;
+    }
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.rpc(
+        "set_group_upcoming_users_trainings_active",
+        {
+            _group_id: group_id,
+            _is_active: is_active,
+        },
+    );
+
+    if (error) {
+        throw new Error(getErrorMessage(error));
     }
 
     revalidatePath("/", "layout");

@@ -34,7 +34,6 @@ export default async function TrainingsPage({
 
   const clubId = resolvedSearchParams.club_id ?? "1";
   const day = resolvedSearchParams.day ?? "MONDAY";
-  const groupId = resolvedSearchParams.group_id ?? "1";
   const date = resolvedSearchParams.date ?? todayDate.toString();
   const month = resolvedSearchParams.month ?? todayMonth.toString();
   const year = resolvedSearchParams.year ?? todayYear.toString();
@@ -43,11 +42,10 @@ export default async function TrainingsPage({
     getTrainingsData({
       clubId,
       day,
-      groupId,
       date,
       month,
       year,
-      userId: user?.id,
+      isActive: true,
     }),
     getClubsData(),
   ]);

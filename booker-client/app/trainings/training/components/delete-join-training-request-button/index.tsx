@@ -21,13 +21,13 @@ export const DeleteJoinTrainingRequestButton = ({
 
   const deleteRequest = async () => {
     const data = await deleteJoinTrainingRequest(user_uuid, Number(trainingId));
-    if (data.error) {
-      toast.error(data.error, {
+    if (data?.error) {
+      toast.error(data.error.toString(), {
         icon: "❌",
       });
       return;
     }
-    if (data.isRequestSuccessfull) {
+    if (data?.isRequestSuccessfull) {
       toast.success("Join training request deleted", {
         icon: "✅",
       });

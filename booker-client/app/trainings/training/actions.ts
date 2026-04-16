@@ -3,6 +3,20 @@ import { getUserProfile } from "@/lib/user-cache";
 import { revalidatePath } from "next/cache";
 import { getTrainingsData } from "../get-trainings-data";
 
+const parseResponseJsonSafe = async (response: Response) => {
+    const responseText = await response.text();
+
+    if (!responseText) {
+        return {} as Record<string, unknown>;
+    }
+
+    try {
+        return JSON.parse(responseText) as Record<string, unknown>;
+    } catch {
+        throw new Error("Unexpected non-JSON response from server");
+    }
+};
+
 export const getTrainings = async (training_id: number) => {
     return getTrainingsData({ trainingId: training_id.toString() });
 };
@@ -50,7 +64,7 @@ export async function deleteJoinTrainingRequest(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/join-training-request`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/join-training-request`,
         {
             method: "DELETE",
             headers: {
@@ -62,9 +76,16 @@ export async function deleteJoinTrainingRequest(
             }),
         },
     );
-    const data = await response.json();
+    const data = await parseResponseJsonSafe(response);
+
+    if (!response.ok) {
+        throw new Error(
+            (data.error as string) || "Failed to delete join request",
+        );
+    }
+
     if (data.error) {
-        throw new Error(data.error);
+        throw new Error((data.error as string).toString());
     }
     return data;
 }
@@ -83,7 +104,7 @@ export async function leaveMyTraining(
         throw new Error("User profile not found");
     }
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/groups/api/update-training-user`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/trainings/api/update-group-training-user`,
         {
             method: "PUT",
             headers: {
@@ -92,13 +113,20 @@ export async function leaveMyTraining(
             body: JSON.stringify({
                 user_id: userProfile.id,
                 training_id,
-                is_active: "false",
+                is_active: false,
             }),
         },
     );
-    const data = await response.json();
+    const data = await parseResponseJsonSafe(response);
+
+    if (!response.ok) {
+        throw new Error(
+            (data.error as string) || "Failed to update training user",
+        );
+    }
+
     if (data.error) {
-        throw new Error(data.error);
+        throw new Error(data.error.toString());
     }
     revalidatePath("/", "layout");
     return data;

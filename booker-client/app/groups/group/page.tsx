@@ -25,6 +25,7 @@ import { getGroupsData } from "../get-groups-data";
 import { headers } from "next/headers";
 import { getClubsData } from "@/app/clubs/get-clubs-data";
 import { UpdateGroupTrainer } from "../components/update-group-trainer";
+import { InactivateGroupButton } from "../components/inactivate-group-button";
 
 export default async function GroupPage({
   searchParams,
@@ -85,6 +86,12 @@ export default async function GroupPage({
   const canUserUpdateTrainer = getPermissions(
     clearanceData.eventsPermissions,
     GroupEventType.GROUP_UPDATE_TRAINER,
+    CRUDType.UPDATE,
+  )?.forPeople.others;
+
+  const canUserInactivateGroup = getPermissions(
+    clearanceData.eventsPermissions,
+    GroupEventType.GROUP_ARCHIVED,
     CRUDType.UPDATE,
   )?.forPeople.others;
 
@@ -169,6 +176,10 @@ export default async function GroupPage({
               >
                 Upcoming trainings
               </Link>
+              <InactivateGroupButton
+                groupId={group.id}
+                canUserInactivateGroup={Boolean(canUserInactivateGroup)}
+              />
               {canUserGenerateTraining && (
                 <GenerateTrainingsCTA groupId={group.id} />
               )}

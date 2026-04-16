@@ -1,0 +1,61 @@
+create or replace function sync_group_changes_to_trainings(
+  _group_id bigint
+)
+returns table(training_id bigint, start_timestamp timestamp, end_timestamp timestamp, max_occupancy int, level int, affected_action text)
+language plpgsql
+as $$
+declare
+  group_max_occupancy int;
+  group_level int;
+  training_record record;
+begin
+  -- Fetch current group configuration
+  select max_occupancy, level
+  into group_max_occupancy, group_level
+  from club_groups
+  where id = _group_id;
+
+  -- If group not found, raise error
+  if not found then
+    raise exception 'Group not found: %', _group_id;
+  end if;
+
+  -- Update all upcoming trainings for this group
+  -- Set max_occupancy and level to current group values
+  for training_record in
+    select id, start_timestamp, end_timestamp, max_occupancy, level
+    from group_trainings
+    where group_id = _group_id
+      and start_timestamp > now()
+    order by start_timestamp asc
+  loop
+    update group_trainings
+    set max_occupancy = group_max_occupancy,
+        level = group_level
+    where id = training_record.id;
+
+    -- Return affected training info
+    return query select
+      training_record.id,
+      training_record.start_timestamp,
+      training_record.end_timestamp,
+      group_max_occupancy,
+      group_level,
+      'group_config_synced'::text;
+  end loop;
+
+  -- If no trainings were found, optionally log that
+  if not found then
+    return query select
+      null::bigint,
+      null::timestamp,
+      null::timestamp,
+      null::int,
+      null::int,
+      'no_upcoming_trainings'::text;
+  end if;
+
+exception when others then
+  raise exception 'Error syncing group changes to trainings: %', sqlerrm;
+end;
+$$;

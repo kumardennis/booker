@@ -14,6 +14,7 @@ type GetTrainingsDataOptions = {
     year?: string;
     userId?: string;
     authorization?: string | null;
+    isActive?: boolean;
 };
 
 type TrainingsFunctionResponse = {
@@ -35,6 +36,7 @@ export const getTrainingsData = async ({
     year,
     userId,
     authorization,
+    isActive,
 }: GetTrainingsDataOptions = {}): Promise<TrainingsFunctionResponse> => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -63,15 +65,17 @@ export const getTrainingsData = async ({
         till_date?: string;
         from_date?: string;
         user_id?: string;
+        is_active?: boolean;
     } = {};
 
     if (clubId) body.club_id = clubId;
-    if (day && !date) body.day = day;
+    if (day) body.day = day;
     if (trainingId) body.training_id = trainingId;
     if (groupId) body.group_id = groupId;
     if (tillDate) body.till_date = tillDate;
     if (fromDate || dateForQuery) body.from_date = fromDate ?? dateForQuery;
     if (userId) body.user_id = userId;
+    if (isActive !== undefined) body.is_active = isActive;
 
     const authHeader = authorization && authorization.trim().length > 0
         ? authorization

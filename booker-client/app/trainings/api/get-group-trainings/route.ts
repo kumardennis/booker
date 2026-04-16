@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
         from_date,
         training_id,
         user_id,
+        is_active,
     } = requestData;
 
     const headersList = await headers();
@@ -34,6 +35,7 @@ export async function POST(request: NextRequest) {
         trainingId: training_id ? training_id.toString() : undefined,
         userId: user_id ? user_id.toString() : undefined,
         authorization: auth,
+        isActive: is_active,
     });
 
     return Response.json(data);

@@ -5,6 +5,16 @@ import {
   errorResponseData,
 } from "../../_shared/confirmedRequiredParams.ts";
 
+const dayNameToIndex: Record<string, number> = {
+  SUNDAY: 0,
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+};
+
 export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
@@ -41,6 +51,7 @@ export const handler = async (req: Request) => {
 
     const {
       club_id,
+      day,
       start_time,
       end_time,
       max_occupancy,
@@ -68,22 +79,27 @@ export const handler = async (req: Request) => {
       );
     }
 
-    const groupDay = new Date(fromDate);
-    const groupDayOfWeek = fromDate.getDay(); // Day of the week for `fromDate`
-    const scheduledDayOfWeek = new Date(`1970-01-01T${start_time}`).getDay(); // Day of the week for `start_time`
+    const scheduledDayOfWeek = dayNameToIndex[String(day).toUpperCase()];
 
-    if (groupDayOfWeek <= scheduledDayOfWeek) {
-      groupDay.setDate(
-        fromDate.getDate() + (scheduledDayOfWeek - groupDayOfWeek),
-      );
-    } else {
-      groupDay.setDate(
-        fromDate.getDate() + (7 - (groupDayOfWeek - scheduledDayOfWeek)),
+    if (scheduledDayOfWeek === undefined) {
+      return new Response(
+        JSON.stringify({
+          isRequestSuccessfull: false,
+          data: null,
+          error: `Invalid group day value: ${day}`,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        },
       );
     }
 
+    const daysUntilTraining = (scheduledDayOfWeek - fromDate.getDay() + 7) % 7;
+    const groupDay = new Date(fromDate);
+    groupDay.setDate(fromDate.getDate() + daysUntilTraining);
+
     const trainingRows = [];
-    let currentDate = groupDay;
+    const currentDate = groupDay;
 
     while (currentDate <= tillDate) {
       const startTimestamp = new Date(

@@ -1,0 +1,58 @@
+create or replace function sync_user_replacement_to_trainings(
+  _group_id bigint,
+  _old_user_id bigint,
+  _new_user_id bigint
+)
+returns table(training_id bigint, start_timestamp timestamp, end_timestamp timestamp, affected_action text)
+language plpgsql
+as $$
+declare
+  training_record record;
+begin
+  -- Get all upcoming trainings for this group
+  for training_record in
+    select gt.id, gt.start_timestamp, gt.end_timestamp
+    from group_trainings gt
+    where gt.group_id = _group_id
+      and gt.start_timestamp > now()
+    order by gt.start_timestamp asc
+  loop
+    -- Deactivate old user in upcoming trainings
+    update users_trainings ut
+    set is_active = false
+    where ut.user_id = _old_user_id
+      and ut.training_id = training_record.id;
+
+    -- If a replacement user exists, activate existing membership or create it.
+    if _new_user_id is not null then
+      update users_trainings ut2
+      set is_active = true
+      where ut2.user_id = _new_user_id
+        and ut2.training_id = training_record.id;
+
+      if not found then
+        insert into users_trainings (user_id, training_id, is_active)
+        values (_new_user_id, training_record.id, true);
+      end if;
+    end if;
+
+    -- Return affected training info
+    return query select
+      training_record.id,
+      training_record.start_timestamp,
+      training_record.end_timestamp,
+      case
+        when _new_user_id is null then 'user_removed'::text
+        else 'user_replaced'::text
+      end;
+  end loop;
+
+  -- If no trainings were found, return empty set (or optionally a note)
+  if not found then
+    return;
+  end if;
+
+exception when others then
+  raise exception 'Error syncing user replacement to trainings: %', sqlerrm;
+end;
+$$;

@@ -60,27 +60,13 @@ export const TrainingsFilter = ({ clubs }: PropTypes) => {
         setUrlState((prev) => ({
           ...prev,
           day: newValue,
-          date: !newValue
-            ? ""
-            : getDateByDayOfWeek(
-                days.indexOf(newValue),
-                Number(urlState.month),
-                Number(urlState.year),
-              ).getDate(),
         }));
         return;
       }
 
-      const dayIndex = new Date(
-        field === "year" ? Number(newValue) : Number(urlState.year),
-        field === "month" ? Number(newValue) : Number(urlState.month) - 1,
-        field === "date" ? Number(newValue) : Number(urlState.date),
-      ).getDay();
-
       setUrlState((prev) => ({
         ...prev,
         [field]: newValue,
-        day: days[dayIndex],
       }));
     };
 

@@ -4,6 +4,16 @@ import {
 } from "../../_shared/confirmedRequiredParams.ts";
 import { createSupabase } from "../../_shared/supabaseClient.ts";
 
+const dayNameToIndex: Record<string, number> = {
+  SUNDAY: 0,
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+};
+
 export const handler = async (req: Request) => {
   const supabase = createSupabase(req);
 
@@ -36,7 +46,7 @@ export const handler = async (req: Request) => {
     // Fetch group details to get the scheduled day of the week
     const { data: groupData, error: groupError } = await supabase
       .from("club_groups")
-      .select("start_time")
+      .select("day")
       .eq("id", group_id)
       .single();
 
@@ -54,22 +64,25 @@ export const handler = async (req: Request) => {
       );
     }
 
-    const { start_time } = groupData;
+    const scheduledDayOfWeek =
+      dayNameToIndex[String(groupData.day).toUpperCase()];
 
-    // Calculate the correct starting date aligned with the group's scheduled day
-    const groupDay = new Date(fromDate);
-    const groupDayOfWeek = fromDate.getDay(); // Day of the week for `fromDate`
-    const scheduledDayOfWeek = new Date(`1970-01-01T${start_time}`).getDay(); // Day of the week for `start_time`
-
-    if (groupDayOfWeek <= scheduledDayOfWeek) {
-      groupDay.setDate(
-        fromDate.getDate() + (scheduledDayOfWeek - groupDayOfWeek),
-      );
-    } else {
-      groupDay.setDate(
-        fromDate.getDate() + (7 - (groupDayOfWeek - scheduledDayOfWeek)),
+    if (scheduledDayOfWeek === undefined) {
+      return new Response(
+        JSON.stringify({
+          isRequestSuccessfull: false,
+          data: null,
+          error: `Invalid group day value: ${groupData.day}`,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        },
       );
     }
+
+    const daysUntilTraining = (scheduledDayOfWeek - fromDate.getDay() + 7) % 7;
+    const groupDay = new Date(fromDate);
+    groupDay.setDate(fromDate.getDate() + daysUntilTraining);
 
     // Call the `refresh_trainings_with_users` database function
     const { error: rpcError } = await supabase.rpc(

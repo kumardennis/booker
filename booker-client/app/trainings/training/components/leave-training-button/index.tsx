@@ -19,7 +19,7 @@ export const LeaveTrainingButton = ({
 
   const leaveTraining = async (
     user_uuid: string | undefined,
-    training_id: number
+    training_id: number,
   ) => {
     if (!user_uuid || !training_id) {
       return null;
@@ -41,7 +41,7 @@ export const LeaveTrainingButton = ({
       onClick={() => leaveTraining(user_uuid, Number(trainingId))}
       className="user-cta"
     >
-      Leave
+      Mark absent
     </button>
   );
 };

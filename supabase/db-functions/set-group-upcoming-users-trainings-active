@@ -1,0 +1,66 @@
+drop function if exists set_group_upcoming_users_trainings_active(bigint, boolean);
+
+create or replace function set_group_upcoming_users_trainings_active(
+  _group_id bigint,
+  _is_active boolean
+)
+returns table(
+  out_training_id bigint,
+  out_start_timestamp timestamp,
+  out_end_timestamp timestamp,
+  out_affected_users_count bigint,
+  out_is_active boolean,
+  out_affected_action text
+)
+language plpgsql
+as $$
+declare
+  training_record record;
+  updated_rows bigint;
+begin
+  if _is_active is null then
+    raise exception 'is_active is required';
+  end if;
+
+  perform 1
+  from club_groups
+  where id = _group_id;
+
+  if not found then
+    raise exception 'Group not found: %', _group_id;
+  end if;
+
+  for training_record in
+    select gt.id, gt.start_timestamp, gt.end_timestamp
+    from group_trainings gt
+    where gt.group_id = _group_id
+      and gt.start_timestamp > now()
+    order by gt.start_timestamp asc
+  loop
+    update group_trainings gt
+    set is_active = _is_active
+    where gt.id = training_record.id
+      and gt.is_active is distinct from _is_active;
+
+    update users_trainings ut
+    set is_active = _is_active
+    where ut.training_id = training_record.id
+      and ut.is_active is distinct from _is_active;
+
+    get diagnostics updated_rows = row_count;
+
+    return query select
+      training_record.id,
+      training_record.start_timestamp,
+      training_record.end_timestamp,
+      updated_rows,
+      _is_active,
+      case
+        when _is_active then 'upcoming_training_and_users_activated'::text
+        else 'upcoming_training_and_users_inactivated'::text
+      end;
+  end loop;
+exception when others then
+  raise exception 'Error updating upcoming users_trainings activity for group %: %', _group_id, sqlerrm;
+end;
+$$;
