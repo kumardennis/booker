@@ -6,7 +6,7 @@
   gap: 1.5rem;
 
   .training-details__top-card {
-    border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+    border: none;
     border-radius: 1rem;
     background: linear-gradient(
       140deg,
@@ -19,7 +19,7 @@
   }
 
   .training-details__section {
-    border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+    border: none;
     border-radius: 1rem;
     background-color: rgba(var(--color-light-rgb), 0.72);
     box-shadow: 0 0.75rem 1.5rem rgba(var(--color-dark-rgb), 0.06);
@@ -86,7 +86,7 @@
       margin-right: 0;
       width: min(100%, 16rem);
       min-height: 11rem;
-      border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+      border: none;
       border-radius: 0.95rem;
       box-shadow: 0 0.7rem 1.4rem rgba(var(--color-dark-rgb), 0.08);
       background-color: rgba(var(--color-light-rgb), 0.76);

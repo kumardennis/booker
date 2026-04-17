@@ -6,7 +6,7 @@
   gap: 1.5rem;
 
   .group-details__top-card {
-    border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+    border: none;
     border-radius: 1rem;
     background: linear-gradient(
       140deg,
@@ -19,7 +19,7 @@
   }
 
   .group-details__section {
-    border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+    border: none;
     border-radius: 1rem;
     background-color: rgba(var(--color-light-rgb), 0.72);
     box-shadow: 0 0.75rem 1.5rem rgba(var(--color-dark-rgb), 0.06);
@@ -102,7 +102,7 @@
     min-width: 17.5rem;
     display: grid;
     gap: 0.6rem;
-    border: 1px solid rgba(var(--color-dark-rgb), 0.18);
+    border: none;
     border-radius: 0.8rem;
     background: rgba(var(--color-light-rgb), 0.95);
     box-shadow: 0 0.9rem 1.8rem rgba(var(--color-dark-rgb), 0.15);
@@ -246,7 +246,7 @@
       margin-right: 0;
       width: min(100%, 16rem);
       min-height: 11rem;
-      border: 1px solid rgba(var(--color-dark-rgb), 0.1);
+      border: none;
       border-radius: 0.95rem;
       box-shadow: 0 0.7rem 1.4rem rgba(var(--color-dark-rgb), 0.08);
       background-color: rgba(var(--color-light-rgb), 0.76);
@@ -282,7 +282,7 @@
       width: min(100%, 16rem);
       min-height: 12rem;
       border-radius: 0.95rem;
-      border: 1px solid rgba(var(--color-dark-rgb), 0.12);
+      border: none;
       box-shadow: 0 0.7rem 1.4rem rgba(var(--color-dark-rgb), 0.08);
       background-color: rgba(var(--color-gray-rgb), 0.66);
     }
